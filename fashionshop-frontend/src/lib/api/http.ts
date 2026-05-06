@@ -2,7 +2,8 @@ import axios from 'axios';
 import { clearStoredSession, getStoredToken } from '@/lib/auth/storage';
 import { parseApiError } from './errors';
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
+// Use relative path for API calls to benefit from Next.js rewrites/proxy
+const apiBaseUrl = '';
 
 export const api = axios.create({
   baseURL: apiBaseUrl,
