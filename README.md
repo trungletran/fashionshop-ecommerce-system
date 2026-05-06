@@ -69,7 +69,7 @@ The system supports common e-commerce flows such as:
 ### Monorepo Layout
 
 - Frontend runs at `http://localhost:3000`
-- Backend API runs at `http://localhost:8081`
+- Backend API runs at `http://localhost:8080`
 - Frontend connects to backend through `NEXT_PUBLIC_API_BASE_URL`
 - Local database uses MySQL schema `ecommerce_db`
 
@@ -213,14 +213,14 @@ Create:
 Example:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8081
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ```
 
 Notes:
 
 - `env.example` may still point to `http://localhost:8080`
-- The backend in this repository runs on `8081`
-- If you use `start.bat`, the script should generate `.env.local` automatically with `http://localhost:8081`
+- The backend in this repository runs on `8080`
+- If you use `start.bat`, the script should generate `.env.local` automatically with `http://localhost:8080`
 
 ## Backend
 
@@ -245,7 +245,7 @@ Example:
 SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/ecommerce_db?createDatabaseIfNotExist=true&serverTimezone=Asia/Ho_Chi_Minh
 SPRING_DATASOURCE_USERNAME=root
 SPRING_DATASOURCE_PASSWORD=TODO: your-mysql-password
-SERVER_PORT=8081
+SERVER_PORT=8080
 JWT_SECRET=TODO: base64-encoded-secret
 JWT_EXPIRATION_MS=86400000
 ```
@@ -272,7 +272,7 @@ start.bat
 Expected local URLs:
 
 - Frontend: `http://localhost:3000`
-- Backend: `http://localhost:8081`
+- Backend: `http://localhost:8080`
 
 Demo accounts shown by the script:
 
@@ -306,7 +306,7 @@ cd fashionshop-backend
 Backend default URL:
 
 ```text
-http://localhost:8081
+http://localhost:8080
 ```
 
 ### Run the Frontend
@@ -367,7 +367,7 @@ TODO:
 Local base URL:
 
 ```text
-http://localhost:8081
+http://localhost:8080
 ```
 
 Standard response envelope:
@@ -474,17 +474,17 @@ Check:
 
 - `fashionshop-frontend/.env.local`
 - `NEXT_PUBLIC_API_BASE_URL`
-- whether the backend is running on `8081` or `8080`
+- whether the backend is running on `8080`
 
 Current repository state:
 
-- `application.properties` uses `8081`
+- `application.properties` uses `8080`
 - `env.example` may still fallback to `8080`
 
 If the port is wrong, fix `.env.local`:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8081
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ```
 
 ### 2. `start.bat` Cannot Import the Database

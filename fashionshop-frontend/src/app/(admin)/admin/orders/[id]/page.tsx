@@ -296,16 +296,16 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-center text-sm opacity-80">
                 <span>Subtotal</span>
-                <span>${order.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span>${(order.subtotal ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
               <div className="flex justify-between items-center text-sm opacity-80">
                 <span>Shipping</span>
-                <span>${order.shippingFee.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span>${(order.shippingFee ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
               <div className="flex justify-between items-center text-sm opacity-80">
                 <span>Discount</span>
-                <span className={order.discount > 0 ? "text-green-400" : ""}>
-                  -${order.discount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                <span className={(order.discount ?? 0) > 0 ? "text-green-400" : ""}>
+                  -${(order.discount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </span>
               </div>
 
@@ -315,7 +315,7 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1">Total Amount</p>
                   <p className="text-3xl font-headline font-black tracking-tighter">
-                    ${order.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    ${(order.totalPrice ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <span className="bg-white/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wider mb-1">USD</span>

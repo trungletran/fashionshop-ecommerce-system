@@ -76,7 +76,7 @@ export default function StaffOrdersPage() {
               <tr key={order.id} className="hover:bg-neutral-50/50 transition-colors group">
                 <td className="px-6 py-5">
                   <div className="flex flex-col">
-                    <span className="font-bold text-black font-mono">#{order.orderNumber || order.id.substring(0, 8)}</span>
+                    <span className="font-bold text-black font-mono">#{order.orderNumber || String(order.id).substring(0, 8)}</span>
                     <span className="text-[10px] text-neutral-400 uppercase tracking-tighter">
                       {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
                     </span>
@@ -99,7 +99,7 @@ export default function StaffOrdersPage() {
                   </span>
                 </td>
                 <td className="px-6 py-5">
-                  <span className="font-bold text-neutral-900">${order.total.toLocaleString()}</span>
+                  <span className="font-bold text-neutral-900">${(order.totalPrice ?? 0).toLocaleString()}</span>
                 </td>
                 <td className="px-6 py-5 text-right">
                   <Link

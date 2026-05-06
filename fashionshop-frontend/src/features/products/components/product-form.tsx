@@ -34,7 +34,7 @@ type Props = {
 export function ProductForm({ initialData, redirectPath = '/admin/products' }: Props) {
   const router = useRouter();
   const createMutation = useCreateProductMutation();
-  const updateMutation = useUpdateManageProductMutation(initialData?.id || '');
+  const updateMutation = useUpdateManageProductMutation(initialData?.id ? String(initialData.id) : '');
   const { data: categories = [] } = useCategoriesQuery();
 
   const {

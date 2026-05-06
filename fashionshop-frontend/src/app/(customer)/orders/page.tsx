@@ -119,7 +119,7 @@ export default function OrdersPage() {
               },
               {
                 header: 'Total',
-                cell: (order) => `$${order.total.toFixed(2)}`,
+                cell: (order) => `$${(order.totalPrice ?? 0).toFixed(2)}`,
               },
               {
                 header: 'Action',

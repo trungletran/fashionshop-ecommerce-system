@@ -91,7 +91,7 @@ export default function StaffProductsPage() {
         <ProductTable
           products={products}
           isLoading={isLoading}
-          onDelete={setDeleteId}
+          onDelete={(id) => setDeleteId(String(id))}
           editBasePath="/staff/products"
         />
 

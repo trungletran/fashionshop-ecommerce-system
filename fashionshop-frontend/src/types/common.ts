@@ -7,13 +7,22 @@ export type ApiPageParams = {
   size?: number;
 };
 
+export type AccountStatus = 'ACTIVE' | 'LOCKED' | 'DELETED';
+
+/**
+ * Matches backend UserResponse.java
+ * All fields from backend are included with appropriate optional markers
+ */
 export type AuthUser = {
-  id: ApiId;
+  id: string;                    // Maps to backend: Integer userId (converted to string for consistency)
   email: string;
   fullName: string;
   role: Role;
   phoneNumber?: string;
+  address?: string;
   avatarUrl?: string;
+  bio?: string;
   isActive?: boolean;
-  accountStatus?: 'ACTIVE' | 'LOCKED' | 'DELETED';
+  accountStatus?: AccountStatus;
+  createdAt?: string;           // LocalDateTime → ISO 8601 string
 };

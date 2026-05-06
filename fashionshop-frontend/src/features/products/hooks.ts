@@ -10,7 +10,7 @@ export function useProductsQuery() {
 }
 
 export function useProductQuery(id: string) {
-  return useQuery({ queryKey: queryKeys.product(id), queryFn: () => fetchProduct(id), enabled: Boolean(id) });
+  return useQuery({ queryKey: queryKeys.product(id), queryFn: () => fetchProduct(Number(id)), enabled: Boolean(id) });
 }
 
 export function useProductSearchQuery(keyword: string) {

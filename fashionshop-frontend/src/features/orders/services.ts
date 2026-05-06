@@ -73,7 +73,7 @@ function filterOrders(orders: Order[], filter?: OrderFilter): Order[] {
         order.orderNumber?.toLowerCase().includes(keyword) ||
         order.customerName?.toLowerCase().includes(keyword) ||
         order.customerEmail?.toLowerCase().includes(keyword) ||
-        order.id.toLowerCase().includes(keyword),
+        String(order.id).toLowerCase().includes(keyword),
       );
     }
   }
@@ -242,7 +242,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
 
 export async function updateManageOrderStatus(orderId: string, status: string) {
   if (USE_MOCK) {
-    const index = mockOrders.findIndex(o => o.id === orderId);
+    const index = mockOrders.findIndex(o => String(o.id) === String(orderId));
     if (index !== -1) {
       mockOrders[index] = {
         ...mockOrders[index],

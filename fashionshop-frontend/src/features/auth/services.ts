@@ -31,7 +31,7 @@ export async function login(request: LoginRequest): Promise<AuthSession> {
 }
 
 export async function register(request: RegisterRequest): Promise<AuthSession> {
-  const payload = { fullName: request.fullName, email: request.email, password: request.password, verifiedPassword: request.confirmPassword };
+  const payload = { fullName: request.fullName, email: request.email, password: request.password, verifiedPassword: request.verifiedPassword };
   const response = await api.post<ApiResponse<AuthResponseRaw>>('/api/auth/register', payload);
   const raw = await apiRequest(Promise.resolve(response));
   return mapAuthResponse(raw);

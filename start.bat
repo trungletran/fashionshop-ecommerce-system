@@ -11,36 +11,36 @@ set BACKEND=%ROOT%fashionshop-backend
 set FRONTEND=%ROOT%fashionshop-frontend
 set SQLFILE=%ROOT%database\ecommerce_db.sql
 
-:: ---- Tim JDK 17 cho Backend ----
-set "JAVA17_HOME="
-if exist "C:\Program Files\Java\jdk-17\bin\java.exe" set "JAVA17_HOME=C:\Program Files\Java\jdk-17"
+:: ---- Tim JDK 21 cho Backend ----
+set "JAVA21_HOME="
+if exist "C:\Program Files\Java\jdk-21\bin\java.exe" set "JAVA21_HOME=C:\Program Files\Java\jdk-21"
 
-if "%JAVA17_HOME%"=="" (
-    for /d %%D in ("C:\Program Files\Java\jdk-17*") do (
+if "%JAVA21_HOME%"=="" (
+    for /d %%D in ("C:\Program Files\Java\jdk-21*") do (
         if exist "%%~fD\bin\java.exe" (
-            set "JAVA17_HOME=%%~fD"
-            goto :jdk17_found
+            set "JAVA21_HOME=%%~fD"
+            goto :jdk21_found
         )
     )
 )
 
-if "%JAVA17_HOME%"=="" (
-    for /d %%D in ("C:\Program Files\Eclipse Adoptium\jdk-17*") do (
+if "%JAVA21_HOME%"=="" (
+    for /d %%D in ("C:\Program Files\Eclipse Adoptium\jdk-21*") do (
         if exist "%%~fD\bin\java.exe" (
-            set "JAVA17_HOME=%%~fD"
-            goto :jdk17_found
+            set "JAVA21_HOME=%%~fD"
+            goto :jdk21_found
         )
     )
 )
 
-if "%JAVA17_HOME%"=="" (
-    echo [ERROR] JDK 17 not found. Please install JDK 17 to run backend.
+if "%JAVA21_HOME%"=="" (
+    echo [ERROR] JDK 21 not found. Please install JDK 21 to run backend.
     pause
     exit /b 1
 )
 
-:jdk17_found
-echo [OK] Using JDK 17: %JAVA17_HOME%
+:jdk21_found
+echo [OK] Using JDK 21: %JAVA21_HOME%
 
 :: ---- Tim MySQL ----
 set MYSQL=mysql
@@ -134,7 +134,7 @@ powershell -NoProfile -Command "$file='%BACKEND%\src\main\resources\application.
 echo.
 echo [2/4] Configuring frontend...
 if not exist "%FRONTEND%\.env.local" (
-    echo NEXT_PUBLIC_API_BASE_URL=http://localhost:8081 > "%FRONTEND%\.env.local"
+    echo NEXT_PUBLIC_API_BASE_URL=http://localhost:8080 > "%FRONTEND%\.env.local"
     echo [OK] Created .env.local
 ) else (
     echo [OK] .env.local already exists.
@@ -156,7 +156,7 @@ if not exist "%FRONTEND%\node_modules" (
 :: ---- Khoi dong Backend ----
 echo.
 echo [4/4] Starting Backend and Frontend...
-start "FashionShop Backend" cmd /k "title FashionShop Backend && cd /d "%BACKEND%" && set "JAVA_HOME=%JAVA17_HOME%" && set "PATH=%JAVA_HOME%\bin;%PATH%" && echo Using JAVA_HOME=%JAVA_HOME% && echo Starting Backend... && mvnw spring-boot:run"
+start "FashionShop Backend" cmd /k "title FashionShop Backend && cd /d "%BACKEND%" && set "JAVA_HOME=%JAVA21_HOME%" && set "PATH=%JAVA_HOME%\bin;%PATH%" && echo Using JAVA_HOME=%JAVA_HOME% && echo Starting Backend... && mvnw spring-boot:run"
 
 :: Doi backend khoi dong truoc (30 giay)
 echo Waiting for Backend to start (30 seconds)...
@@ -169,7 +169,7 @@ echo.
 echo ==========================================
 echo   System is starting!
 echo   Frontend: http://localhost:3000
-echo   Backend:  http://localhost:8081
+echo   Backend:  http://localhost:8080
 echo.
 echo   Demo accounts:
 echo   admin@gmail.com     / 123456

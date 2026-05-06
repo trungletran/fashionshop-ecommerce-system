@@ -46,7 +46,7 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
       fullName: registerValues.fullName,
       email: registerValues.email,
       password: registerValues.password,
-      confirmPassword: registerValues.confirmPassword,
+      verifiedPassword: registerValues.confirmPassword,
     });
   }
 

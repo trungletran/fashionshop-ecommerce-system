@@ -119,7 +119,7 @@ export default function AdminProductsPage() {
             <ProductTable
               products={products}
               isLoading={isLoading}
-              onDelete={(id) => setDeleteId(id)}
+              onDelete={(id) => setDeleteId(String(id))}
             />
           )}
         </div>

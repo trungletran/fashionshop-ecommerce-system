@@ -137,18 +137,18 @@ export function AdminOrdersTable({ orders, isLoading }: Props) {
 
               // Customer display — API doesn't return name/email, fall back to order info
               const displayName =
-                order.customerName ??
-                `Order ${order.orderNumber ?? order.id.slice(-6).toUpperCase()}`;
+                order.receiverName ??
+                `Order ${order.orderNumber ?? String(order.id).slice(-6).toUpperCase()}`;
               const displayEmail =
-                order.customerEmail ?? order.paymentMethod ?? "—";
-              const initials = order.customerName
-                ? order.customerName
+                order.phone ?? order.paymentMethod ?? "—";
+              const initials = order.receiverName
+                ? order.receiverName
                   .split(" ")
                   .map((n) => n[0])
                   .join("")
                   .slice(0, 2)
                   .toUpperCase()
-                : (order.orderNumber ?? order.id).slice(-2).toUpperCase();
+                : (order.orderNumber ?? String(order.id)).slice(-2).toUpperCase();
 
               const formattedDate = order.createdAt
                 ? new Date(order.createdAt).toLocaleDateString("en-US", {
@@ -165,7 +165,7 @@ export function AdminOrdersTable({ orders, isLoading }: Props) {
                 >
                   {/* Order ID */}
                   <td className="px-8 py-6 font-bold text-sm">
-                    #{order.orderNumber ?? order.id.slice(-6).toUpperCase()}
+                    #{order.orderNumber ?? String(order.id).slice(-6).toUpperCase()}
                   </td>
 
                   {/* Customer */}
@@ -193,9 +193,9 @@ export function AdminOrdersTable({ orders, isLoading }: Props) {
                   {/* Total */}
                   <td className="px-8 py-6 font-bold text-sm whitespace-nowrap">
                     $
-                    {order.total.toLocaleString("en-US", {
+                    {order.totalPrice?.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
-                    })}
+                    }) ?? "0.00"}
                   </td>
 
                   {/* Payment Status */}

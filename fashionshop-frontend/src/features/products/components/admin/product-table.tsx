@@ -6,7 +6,7 @@ import type { Product } from '@/types/product';
 
 type Props = {
   products: Product[];
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
   isLoading?: boolean;
   editBasePath?: string;
 };

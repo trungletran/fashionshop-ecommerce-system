@@ -14,7 +14,7 @@ import type { CustomerAccount, StaffAccount } from '@/types/user';
 
 export const mockProducts: Product[] = [
     {
-        id: 'prod_001',
+        id: 1001,
         slug: '18studio-sculpted-blazer',
         name: '18.STUDIO Sculpted Blazer',
         description: 'A precisely tailored blazer with architectural shoulders and a subtly nipped waist.',
@@ -27,7 +27,7 @@ export const mockProducts: Product[] = [
         isFeatured: true,
     },
     {
-        id: 'prod_002',
+        id: 1002,
         slug: 'kinetic-pleat-trousers',
         name: 'Kinetic Pleat Trousers',
         description: 'Wide-leg trousers featuring a single front pleat and fluid drape.',
@@ -40,7 +40,7 @@ export const mockProducts: Product[] = [
         isFeatured: false,
     },
     {
-        id: 'prod_003',
+        id: 1003,
         slug: 'draped-cotton-poplin',
         name: 'Draped Cotton Poplin',
         description: 'Relaxed-fit shirt in washed cotton poplin with asymmetric hem.',
@@ -53,7 +53,7 @@ export const mockProducts: Product[] = [
         isFeatured: false,
     },
     {
-        id: 'prod_004',
+        id: 1004,
         slug: 'artisan-leather-tote',
         name: 'Artisan Leather Tote',
         description: 'Hand-stitched vegetable-tanned leather tote with interior zip pocket.',
@@ -66,7 +66,7 @@ export const mockProducts: Product[] = [
         isFeatured: true,
     },
     {
-        id: 'prod_005',
+        id: 1005,
         slug: 'minimal-wool-overcoat',
         name: 'Minimal Wool Overcoat',
         description: 'Double-faced wool overcoat with clean, collarless silhouette.',
@@ -124,7 +124,7 @@ export const mockCart: Cart = {
 
 export const mockOrders: Order[] = [
     {
-        id: 'ord_001',
+        id: 3001,
         orderNumber: 'FS-8829',
         status: 'PROCESSING',
         paymentMethod: 'COD',
@@ -153,6 +153,9 @@ export const mockOrders: Order[] = [
         shippingFee: 25.0,
         discount: 0,
         total: 1115.0,
+        totalPrice: 1115.0,
+        receiverName: 'Alexander Thorne',
+        phone: '+1 555-012-3456',
         createdAt: '2023-10-24T14:45:00Z',
         shippingAddress: '724 Fifth Avenue, Floor 12, New York, NY 10019, United States',
         activityLog: [
@@ -161,7 +164,7 @@ export const mockOrders: Order[] = [
         ]
     },
     {
-        id: 'ord_002',
+        id: 3002,
         orderNumber: 'FS-8828',
         status: 'SHIPPED',
         paymentMethod: 'MOMO',
@@ -189,6 +192,10 @@ export const mockOrders: Order[] = [
         shippingFee: 0,
         discount: 150.0,
         total: 1980.0,
+        totalPrice: 1980.0,
+        receiverName: 'Elena Rostova',
+        phone: '+1 555-987-6543',
+        shippingAddress: '123 Fashion Ave, NY 10001, US',
         createdAt: '2026-03-18T14:22:00Z',
     },
 ];
@@ -196,14 +203,14 @@ export const mockOrders: Order[] = [
 // Shop Catalog Products (matches the listing page IDs) 
 
 export const mockCatalogProducts: Product[] = [
-    { id: 'modular-tech-parka', slug: 'modular-tech-parka', name: 'Modular Tech Parka', description: 'A storm-ready parka with detachable quilted liner and articulated hood.', price: 840, stockQuantity: 15, categoryId: 1, categoryName: 'Outerwear', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: false },
-    { id: 'boxy-sculptural-blazer', slug: 'boxy-sculptural-blazer', name: 'Boxy Sculptural Blazer', description: 'Oversized blazer in structured gray wool.', price: 1250, stockQuantity: 10, categoryId: 2, categoryName: 'Tailoring', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: true },
-    { id: 'archival-cargo-trousers', slug: 'archival-cargo-trousers', name: 'Archival Cargo Trousers', description: 'Relaxed cargo trousers in washed green denim.', price: 560, stockQuantity: 20, categoryId: 3, categoryName: 'Bottoms', imageUrl: '/images/product-trousers.svg', isActive: true, isFeatured: false },
-    { id: 'oversized-ribbed-knit', slug: 'oversized-ribbed-knit', name: 'Oversized Ribbed Knit', description: 'Deep teal oversized knit.', price: 720, stockQuantity: 18, categoryId: 4, categoryName: 'Knitwear', imageUrl: '/images/product-shirt.svg', isActive: true, isFeatured: false },
-    { id: 'tactical-layering-vest', slug: 'tactical-layering-vest', name: 'Tactical Layering Vest', description: 'High-visibility vest with technical panelling.', price: 440, stockQuantity: 22, categoryId: 1, categoryName: 'Outerwear', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: false },
-    { id: 'fluid-silk-shirt', slug: 'fluid-silk-shirt', name: 'Fluid Silk Shirt', description: 'A muted rose satin shirt.', price: 380, stockQuantity: 30, categoryId: 2, categoryName: 'Tailoring', imageUrl: '/images/product-shirt.svg', isActive: true, isFeatured: false },
-    { id: 'architectural-shell-coat', slug: 'architectural-shell-coat', name: 'Architectural Shell Coat', description: 'Sharp-silhouette shell coat.', price: 1180, stockQuantity: 8, categoryId: 1, categoryName: 'Outerwear', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: false },
-    { id: 'narrow-pleat-trousers', slug: 'narrow-pleat-trousers', name: 'Narrow Pleat Trousers', description: 'Slim-cut trousers in dark green wool blend.', price: 610, stockQuantity: 16, categoryId: 3, categoryName: 'Bottoms', imageUrl: '/images/product-trousers.svg', isActive: true, isFeatured: false },
+    { id: 2002, slug: 'modular-tech-parka', name: 'Modular Tech Parka', description: 'A storm-ready parka with detachable quilted liner and articulated hood.', price: 840, stockQuantity: 15, categoryId: 1, categoryName: 'Outerwear', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: false },
+    { id: 2003, slug: 'boxy-sculptural-blazer', name: 'Boxy Sculptural Blazer', description: 'Oversized blazer in structured gray wool.', price: 1250, stockQuantity: 10, categoryId: 2, categoryName: 'Tailoring', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: true },
+    { id: 2004, slug: 'archival-cargo-trousers', name: 'Archival Cargo Trousers', description: 'Relaxed cargo trousers in washed green denim.', price: 560, stockQuantity: 20, categoryId: 3, categoryName: 'Bottoms', imageUrl: '/images/product-trousers.svg', isActive: true, isFeatured: false },
+    { id: 2005, slug: 'oversized-ribbed-knit', name: 'Oversized Ribbed Knit', description: 'Deep teal oversized knit.', price: 720, stockQuantity: 18, categoryId: 4, categoryName: 'Knitwear', imageUrl: '/images/product-shirt.svg', isActive: true, isFeatured: false },
+    { id: 2006, slug: 'tactical-layering-vest', name: 'Tactical Layering Vest', description: 'High-visibility vest with technical panelling.', price: 440, stockQuantity: 22, categoryId: 1, categoryName: 'Outerwear', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: false },
+    { id: 2007, slug: 'fluid-silk-shirt', name: 'Fluid Silk Shirt', description: 'A muted rose satin shirt.', price: 380, stockQuantity: 30, categoryId: 2, categoryName: 'Tailoring', imageUrl: '/images/product-shirt.svg', isActive: true, isFeatured: false },
+    { id: 2008, slug: 'architectural-shell-coat', name: 'Architectural Shell Coat', description: 'Sharp-silhouette shell coat.', price: 1180, stockQuantity: 8, categoryId: 1, categoryName: 'Outerwear', imageUrl: '/images/product-blazer.svg', isActive: true, isFeatured: false },
+    { id: 2009, slug: 'narrow-pleat-trousers', name: 'Narrow Pleat Trousers', description: 'Slim-cut trousers in dark green wool blend.', price: 610, stockQuantity: 16, categoryId: 3, categoryName: 'Bottoms', imageUrl: '/images/product-trousers.svg', isActive: true, isFeatured: false },
 ];
 
 /** All mock products combined (original + shop catalog) */
@@ -239,12 +246,12 @@ export const mockStaff: StaffAccount[] = [
 // ─── Mock Data Helpers ──────────────────────────────────────────────────────
 
 export const getMockProduct = (idOrSlug: string): Product | undefined => {
-    return allMockProducts.find(p => p.id === idOrSlug || p.slug === idOrSlug);
+    return allMockProducts.find(p => String(p.id) === idOrSlug || p.slug === idOrSlug);
 };
 
 export const addMockProduct = (request: any): Product => {
     const newProduct: Product = {
-        id: `prod_${Math.random().toString(36).substr(2, 9)}`,
+        id: Math.floor(Math.random() * 100000),
         ...request,
     };
     allMockProducts.unshift(newProduct);
@@ -252,6 +259,6 @@ export const addMockProduct = (request: any): Product => {
 };
 
 export const getMockOrder = (id: string): Order | undefined => {
-    return mockOrders.find(o => o.id === id);
+    return mockOrders.find(o => String(o.id) === String(id));
 };
 

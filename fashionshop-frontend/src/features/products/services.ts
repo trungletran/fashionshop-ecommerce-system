@@ -54,8 +54,8 @@ export async function fetchProducts(filter?: ProductFilter) {
   return apiRequest(Promise.resolve(response));
 }
 
-export async function fetchProduct(id: string) {
-  if (USE_MOCK) return getMockProduct(id);
+export async function fetchProduct(id: number) {
+  if (USE_MOCK) return getMockProduct(String(id));
   const response = await api.get<ApiResponse<Product>>(`/api/products/${id}`);
   return apiRequest(Promise.resolve(response));
 }
@@ -82,7 +82,7 @@ export async function createProduct(request: UpsertProductRequest) {
   if (USE_MOCK) {
     const categoryName = request.categoryId ? CATEGORY_MAP[Number(request.categoryId)] : 'Uncategorized';
     const newProduct: Product = {
-      id: `prod_${Math.random().toString(36).substr(2, 9)}`,
+      id: Math.floor(Math.random() * 1000000),
       ...request,
       categoryName,
     };
@@ -95,7 +95,7 @@ export async function createProduct(request: UpsertProductRequest) {
 
 export async function updateProduct(id: string, request: UpsertProductRequest) {
   if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => p.id === id);
+    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
     if (index !== -1) {
       const categoryName = request.categoryId ? CATEGORY_MAP[Number(request.categoryId)] : allMockProducts[index].categoryName;
       allMockProducts[index] = {
@@ -105,7 +105,7 @@ export async function updateProduct(id: string, request: UpsertProductRequest) {
       };
       return allMockProducts[index];
     }
-    return { id, ...request } as Product;
+    return { id: Number(id), ...request } as unknown as Product;
   }
   const response = await api.put<ApiResponse<Product>>(`/api/products/${id}`, request);
   return apiRequest(Promise.resolve(response));
@@ -113,7 +113,7 @@ export async function updateProduct(id: string, request: UpsertProductRequest) {
 
 export async function deleteProduct(id: string) {
   if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => p.id === id);
+    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
     if (index !== -1) {
       allMockProducts.splice(index, 1);
     }
@@ -202,7 +202,7 @@ export async function fetchManageProduct(id: string) {
 
 export async function updateManageProduct(id: string, request: UpsertProductRequest) {
   if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => p.id === id);
+    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
     if (index !== -1) {
       const categoryName = request.categoryId ? CATEGORY_MAP[Number(request.categoryId)] : allMockProducts[index].categoryName;
       allMockProducts[index] = {
@@ -212,7 +212,7 @@ export async function updateManageProduct(id: string, request: UpsertProductRequ
       };
       return allMockProducts[index];
     }
-    return { id, ...request } as Product;
+    return { id: Number(id), ...request } as unknown as Product;
   }
   
   const payload = {
@@ -227,7 +227,7 @@ export async function updateManageProduct(id: string, request: UpsertProductRequ
 
 export async function deleteManageProduct(id: string) {
   if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => p.id === id);
+    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
     if (index !== -1) {
       allMockProducts.splice(index, 1);
     }
