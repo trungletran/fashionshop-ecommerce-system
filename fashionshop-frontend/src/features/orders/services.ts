@@ -269,3 +269,11 @@ export async function updateManageOrderStatus(orderId: string, status: string) {
   const raw = await apiRequest(Promise.resolve(response));
   return normalizeOrder(raw);
 }
+
+export async function fetchManageAllOrders(): Promise<Order[]> {
+  if (USE_MOCK) return mockOrders;
+  const response = await api.get<ApiResponse<any[]>>('/api/orders/manage');
+  const raw = await apiRequest(Promise.resolve(response));
+  return Array.isArray(raw) ? raw.map(normalizeOrder) : [];
+}
+

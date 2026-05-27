@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { cancelMyOrder, createOrder, fetchCheckoutSummary, fetchManageOrder, fetchManageOrders, fetchMyOrder, fetchMyOrderHistory, fetchMyOrderPayment, fetchMyOrderStatus, fetchMyOrders, fetchOrder, fetchOrders, updateCheckoutPaymentMethod, updateManageOrderStatus, updateOrderStatus } from './services';
+import { cancelMyOrder, createOrder, fetchCheckoutSummary, fetchManageAllOrders, fetchManageOrder, fetchManageOrders, fetchMyOrder, fetchMyOrderHistory, fetchMyOrderPayment, fetchMyOrderStatus, fetchMyOrders, fetchOrder, fetchOrders, updateCheckoutPaymentMethod, updateManageOrderStatus, updateOrderStatus } from './services';
 import { queryKeys } from '@/lib/api/query-keys';
 import type { Order, OrderFilter } from '@/types/order';
 
@@ -149,5 +149,12 @@ export function useUpdateManageOrderStatusMutation(orderId: string) {
       await queryClient.invalidateQueries({ queryKey: queryKeys.order(orderId) });
       await queryClient.invalidateQueries({ queryKey: queryKeys.orders });
     },
+  });
+}
+
+export function useManageAllOrdersQuery() {
+  return useQuery({
+    queryKey: [...queryKeys.orders, 'manage', 'all'],
+    queryFn: fetchManageAllOrders,
   });
 }
