@@ -94,4 +94,14 @@ a {
   }
   
   .scrollbar-hide::-webkit-scrollbar { display: none; }
-}
+}
+
+@keyframes scan {
+  0%, 100% {
+    top: 0%;
+  }
+  50% {
+    top: 98%;
+  }
+}
+
