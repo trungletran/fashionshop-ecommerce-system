@@ -224,7 +224,7 @@ export function AiChatbox() {
       {/* 2. Floating Glassmorphism Chat Drawer */}
       {isOpen && (
         <div 
-          className="fixed bottom-24 right-6 z-50 flex h-[550px] w-[390px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl shadow-2xl transition-all duration-300 dark:border-zinc-800/80 animate-in slide-in-from-bottom-5 fade-in-20"
+          className="fixed bottom-24 right-6 z-50 flex h-[550px] w-[390px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-3xl border border-[#D8CCFF] bg-[#F0ECFF] text-[#2D2D2D] backdrop-blur-xl shadow-2xl transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in-20"
         >
           {/* Header Panel */}
           <div className="bg-gradient-to-r from-brand-600 to-indigo-600 p-4 text-white flex items-center justify-between shadow-md">

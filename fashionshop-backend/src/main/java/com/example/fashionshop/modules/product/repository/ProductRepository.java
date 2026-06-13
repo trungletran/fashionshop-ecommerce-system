@@ -29,6 +29,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Page<Product> findByIsActiveTrueAndNameContainingIgnoreCaseAndCategoryId(String keyword, Integer categoryId, Pageable pageable);
 
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE Product p SET p.isActive = :isActive WHERE p.category.id = :categoryId")
+    void updateIsActiveByCategoryId(@Param("categoryId") Integer categoryId, @Param("isActive") Boolean isActive);
+
     @Query("""
             SELECT p
             FROM Product p

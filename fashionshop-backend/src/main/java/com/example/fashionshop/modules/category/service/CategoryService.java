@@ -9,4 +9,10 @@ public interface CategoryService {
     CategoryResponse create(CategoryRequest request);
 
     List<CategoryResponse> getAll();
+
+    List<CategoryResponse> getManageCategories();
+
+    void delete(Integer categoryId);
+
+    CategoryResponse activate(Integer categoryId);
 }

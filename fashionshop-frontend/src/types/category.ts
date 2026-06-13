@@ -2,11 +2,11 @@ export type Category = {
   id: string;
   name: string;
   description?: string;
-  active?: boolean;
+  isActive?: boolean;
 };
 
 export type UpsertCategoryRequest = {
   name: string;
   description?: string;
-  active?: boolean;
+  isActive?: boolean;
 };

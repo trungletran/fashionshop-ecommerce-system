@@ -28,4 +28,23 @@ public class CategoryController {
     public ApiResponse<CategoryResponse> create(@Valid @RequestBody CategoryRequest request) {
         return ApiResponse.success("Category created successfully", categoryService.create(request));
     }
+
+    @GetMapping("/manage")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    public ApiResponse<List<CategoryResponse>> getManageCategories() {
+        return ApiResponse.success("Manage categories fetched successfully", categoryService.getManageCategories());
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    public ApiResponse<Void> delete(@PathVariable Integer id) {
+        categoryService.delete(id);
+        return ApiResponse.success("Category deleted successfully", null);
+    }
+
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    public ApiResponse<CategoryResponse> activate(@PathVariable Integer id) {
+        return ApiResponse.success("Category activated successfully", categoryService.activate(id));
+    }
 }

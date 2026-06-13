@@ -9,4 +9,5 @@ public class CategoryResponse {
     private Integer id;
     private String name;
     private String description;
+    private Boolean isActive;
 }

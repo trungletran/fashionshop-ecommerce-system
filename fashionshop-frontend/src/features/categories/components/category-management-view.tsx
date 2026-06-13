@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { LoadingState } from '@/components/common/loading-state';
 import { EmptyState } from '@/components/common/empty-state';
 import { Button } from '@/components/ui/button';
-import { useCategoriesQuery, useCreateCategoryMutation } from '@/features/categories/hooks';
+import { useManageCategoriesQuery, useCreateCategoryMutation, useDeleteCategoryMutation, useActivateCategoryMutation } from '@/features/categories/hooks';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils/cn';
 
@@ -23,8 +23,10 @@ type CategoryManagementViewProps = {
 };
 
 export function CategoryManagementView({ emptyActionHref }: CategoryManagementViewProps) {
-  const categoriesQuery = useCategoriesQuery();
-  const mutation = useCreateCategoryMutation();
+  const categoriesQuery = useManageCategoriesQuery();
+  const createMutation = useCreateCategoryMutation();
+  const deleteMutation = useDeleteCategoryMutation();
+  const activateMutation = useActivateCategoryMutation();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const form = useForm<CategoryFormValues>({
@@ -116,7 +118,7 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
           <form
             className="grid grid-cols-12 gap-6"
             onSubmit={form.handleSubmit((values) =>
-              mutation.mutate(values, {
+              createMutation.mutate(values, {
                 onSuccess: () => {
                   toast.success('Category created');
                   form.reset();
@@ -160,10 +162,10 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
             <div className="col-span-12 flex items-center gap-4 pt-2">
               <Button
                 type="submit"
-                disabled={mutation.isPending}
+                disabled={createMutation.isPending}
                 className="bg-black text-white px-8 rounded-md text-[10px] font-bold tracking-widest uppercase hover:bg-neutral-800"
               >
-                {mutation.isPending ? 'Creating...' : 'Create Category'}
+                {createMutation.isPending ? 'Creating...' : 'Create Category'}
               </Button>
               <button
                 type="button"
@@ -192,6 +194,8 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
                 <tr className="border-b border-neutral-100">
                   <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Category Name</th>
                   <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Description</th>
+                  <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold text-center">Status</th>
+                  <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-50 font-body">
@@ -217,6 +221,52 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
                           <p className="text-sm text-neutral-600 leading-relaxed">
                             {category.description?.trim() || 'No description provided yet.'}
                           </p>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          {category.isActive ? (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium">
+                              <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                              Active
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-xs font-medium">
+                              <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
+                              Inactive
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {category.isActive ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                              onClick={() => {
+                                if (window.confirm('Delete this category? This will hide all products in this category.')) {
+                                  deleteMutation.mutate(category.id, {
+                                    onSuccess: () => toast.success('Category deleted')
+                                  });
+                                }
+                              }}
+                              disabled={deleteMutation.isPending}
+                            >
+                              Delete
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
+                              onClick={() => {
+                                activateMutation.mutate(category.id, {
+                                  onSuccess: () => toast.success('Category activated')
+                                });
+                              }}
+                              disabled={activateMutation.isPending}
+                            >
+                              Activate
+                            </Button>
+                          )}
                         </td>
                       </tr>
                     );
