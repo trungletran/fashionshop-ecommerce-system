@@ -32,19 +32,19 @@ export default function WishlistPage() {
   const items = wishlistQuery.data;
 
   return (
-    <main className="mx-auto min-h-screen max-w-7xl px-6 py-10 font-body text-[#1a1c1c] md:px-12 lg:px-24 lg:py-14">
+    <main className="mx-auto min-h-screen max-w-7xl px-6 py-10 font-body text-on-surface md:px-12 lg:px-24 lg:py-14">
       <header className="mb-16">
         <h1 className="font-headline mb-4 text-5xl font-black uppercase tracking-[-0.06em] md:text-7xl">Wishlist.</h1>
-        <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[#5e5e5e]">
+        <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-on-surface-variant">
           {items.length} Saved Item{items.length !== 1 ? 's' : ''}
         </p>
       </header>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((item) => (
-          <Card key={item.productId} className="group overflow-hidden rounded-xl border-[#c6c6c633] bg-white">
+          <Card key={item.productId} className="group overflow-hidden rounded-xl border-outline-variant bg-surface-container-lowest">
             <Link href={`/products/${item.productId}`}>
-              <div className="aspect-[4/5] overflow-hidden bg-[#f3f3f4]">
+              <div className="aspect-[4/5] overflow-hidden bg-surface-container">
                 {item.imageUrl ? (
                   <Image
                     alt={item.productName}
@@ -54,7 +54,7 @@ export default function WishlistPage() {
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-4xl font-black uppercase text-[#c6c6c6]">
+                  <div className="flex h-full w-full items-center justify-center text-4xl font-black uppercase text-on-surface-variant">
                     {item.productName.charAt(0)}
                   </div>
                 )}
@@ -66,14 +66,14 @@ export default function WishlistPage() {
                 <p className="mt-1 font-headline text-base font-bold">${item.price.toFixed(2)}</p>
               </div>
               <div className="flex gap-3">
-                <Button asChild className="flex-1 rounded-md bg-black text-xs font-bold uppercase tracking-[0.24em] !text-white hover:bg-[#474747]">
+                <Button asChild className="flex-1 rounded-md bg-primary text-xs font-bold uppercase tracking-[0.24em] text-on-primary hover:opacity-90">
                   <Link href={`/products/${item.productId}`}>View Product</Link>
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
-                  className="h-11 w-11 shrink-0 rounded-md border-[#e6e6e6] hover:border-red-300 hover:text-red-600"
+                  className="h-11 w-11 shrink-0 rounded-md border-outline hover:border-error hover:text-error"
                   onClick={() => setConfirmProductId(item.productId)}
                   aria-label="Remove from wishlist"
                 >
@@ -88,7 +88,7 @@ export default function WishlistPage() {
       <div className="mt-16 text-center">
         <Link
           href="/products"
-          className="inline-block border-b-2 border-black pb-2 text-sm font-bold uppercase tracking-[0.24em] transition-opacity hover:opacity-50"
+          className="inline-block border-b-2 border-on-surface pb-2 text-sm font-bold uppercase tracking-[0.24em] transition-opacity hover:opacity-50"
         >
           Continue Shopping
         </Link>

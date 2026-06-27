@@ -5,8 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { ImageUploader } from '@/components/ui/image-uploader';
 import { useCreateProductMutation, useUpdateManageProductMutation } from '@/features/products/hooks';
 import { useCategoriesQuery } from '@/features/categories/hooks';
 import { cn } from '@/lib/utils/cn';
@@ -18,7 +18,7 @@ const productSchema = z.object({
   price: z.coerce.number().min(0, 'Price must be positive'),
   stockQuantity: z.coerce.number().min(0, 'Stock must be at least 0'),
   categoryId: z.coerce.number().optional(),
-  imageUrl: z.string().url('Must be a valid URL').or(z.string().length(0)).optional(),
+  imageUrls: z.array(z.string().url()).default([]),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
   slug: z.string().optional(),
@@ -42,6 +42,7 @@ export function ProductForm({ initialData, redirectPath = '/admin/products' }: P
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema) as any,
@@ -53,10 +54,12 @@ export function ProductForm({ initialData, redirectPath = '/admin/products' }: P
       categoryId: initialData?.categoryId || undefined,
       isActive: initialData?.isActive ?? true,
       isFeatured: initialData?.isFeatured ?? false,
-      imageUrl: initialData?.imageUrl || '',
+      imageUrls: initialData?.imageUrl ? [initialData.imageUrl] : [],
       slug: initialData?.slug || '',
     },
   });
+
+  const watchedImageUrls = watch('imageUrls') ?? [];
 
   const watchedValues = useWatch({ control }) as Partial<ProductFormValues>;
 
@@ -65,29 +68,32 @@ export function ProductForm({ initialData, redirectPath = '/admin/products' }: P
   const previewCategorySelected = categories.find(c => c.id === watchedCategoryId);
 
   const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
+    const primaryImageUrl = data.imageUrls?.[0] ?? '';
     const payload = {
       ...data,
-      categoryId: data.categoryId || (categories.length > 0 ? categories[0].id : 1), 
+      categoryId: data.categoryId || (categories.length > 0 ? categories[0].id : 1),
+      imageUrl: primaryImageUrl,
+      imageUrls: data.imageUrls ?? [],
     };
 
     if (initialData) {
       updateMutation.mutate(payload as any, {
         onSuccess: () => {
-          toast.success('Product updated successfully');
+          toast.success('Cập nhật sản phẩm thành công!');
           router.push(redirectPath);
         },
         onError: (error: any) => {
-          toast.error(error.message || 'Failed to update product');
+          toast.error(error.message || 'Cập nhật thất bại');
         },
       });
     } else {
       createMutation.mutate(payload as any, {
         onSuccess: () => {
-          toast.success('Product created successfully');
+          toast.success('Tạo sản phẩm thành công!');
           router.push(redirectPath);
         },
         onError: (error: any) => {
-          toast.error(error.message || 'Failed to create product');
+          toast.error(error.message || 'Tạo sản phẩm thất bại');
         },
       });
     }
@@ -169,42 +175,25 @@ export function ProductForm({ initialData, redirectPath = '/admin/products' }: P
           <section className="bg-surface-container-lowest p-10 rounded-xl space-y-8 border border-neutral-100">
             <div className="space-y-1">
               <h2 className="text-xl font-bold tracking-tight">Product Imagery</h2>
-              <p className="text-sm text-neutral-500">Provide a high-resolution editorial photography URL.</p>
+              <p className="text-sm text-neutral-500">
+                Tải ảnh sản phẩm lên Cloudinary. Ảnh đầu tiên sẽ là ảnh chính hiển thị trong danh sách.
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold tracking-widest uppercase text-neutral-400">Image URL</label>
-                <input 
-                  {...register('imageUrl')}
-                  className={cn(
-                    "w-full bg-surface-container-low border-none rounded-md px-4 py-4 text-sm focus:ring-1 focus:ring-black placeholder:text-neutral-300 transition-all",
-                    errors.imageUrl && "ring-1 ring-error"
-                  )}
-                  placeholder="https://images.unsplash.com/..." 
-                  type="text"
-                />
-                {errors.imageUrl && <p className="text-xs text-error mt-1">{errors.imageUrl.message}</p>}
-              </div>
+            <ImageUploader
+              value={watchedImageUrls}
+              onChange={(urls) => setValue('imageUrls', urls, { shouldValidate: true })}
+              maxImages={10}
+              folder="fashionshop/products"
+              disabled={createMutation.isPending || updateMutation.isPending}
+            />
 
-              <div className="grid grid-cols-4 gap-4">
-                {/* Image Preview Slot */}
-                <div className="col-span-2 aspect-[4/5] border-2 border-dashed border-neutral-200 rounded-lg flex flex-col items-center justify-center bg-surface-container-low relative overflow-hidden group">
-                  {watchedValues.imageUrl ? (
-                    <img 
-                      src={watchedValues.imageUrl} 
-                      alt="Preview" 
-                      className="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                    />
-                  ) : (
-                    <>
-                      <span className="material-symbols-outlined text-4xl text-neutral-300 group-hover:text-black transition-colors mb-4">image</span>
-                      <span className="text-[10px] font-bold tracking-widest uppercase text-neutral-400">Image Preview</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
+            {errors.imageUrls && (
+              <p className="text-xs text-red-500 flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm">error</span>
+                {errors.imageUrls.message as string}
+              </p>
+            )}
           </section>
         </div>
 
@@ -300,15 +289,16 @@ export function ProductForm({ initialData, redirectPath = '/admin/products' }: P
             <p className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-60">Store Preview</p>
             <div className="space-y-4 relative z-10">
               <div className="aspect-[4/5] bg-neutral-800 rounded-md mb-6 overflow-hidden relative">
-                {watchedValues.imageUrl ? (
+                {watchedImageUrls[0] ? (
                   <img 
-                    src={watchedValues.imageUrl} 
+                    src={watchedImageUrls[0]} 
                     alt="Preview" 
                     className="absolute inset-0 w-full h-full object-cover grayscale brightness-75 hover:grayscale-0 transition-all duration-700"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                     <span className="material-symbols-outlined text-neutral-600 text-4xl">image</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                    <span className="material-symbols-outlined text-neutral-600 text-4xl">image</span>
+                    <span className="text-[10px] text-neutral-600 tracking-widest uppercase">Chưa có ảnh</span>
                   </div>
                 )}
               </div>

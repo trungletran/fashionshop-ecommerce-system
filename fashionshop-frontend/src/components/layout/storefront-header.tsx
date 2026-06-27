@@ -27,7 +27,7 @@ export function StorefrontHeader() {
   const isLoggedIn = Boolean(session.token);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-outline/70 bg-surface/95 backdrop-blur">
       <div className="w-full px-2 sm:px-4">
         <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3">
           <Link href="/" aria-label="Go to home" className="inline-flex items-center justify-self-start">
@@ -42,8 +42,8 @@ export function StorefrontHeader() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'relative pb-1 text-sm font-semibold uppercase tracking-wide text-foreground/80 transition-colors hover:text-foreground',
-                    active && 'text-foreground after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:bg-foreground after:content-[""]',
+                    'relative pb-1 text-sm font-semibold uppercase tracking-wide text-on-surface/80 transition-colors hover:text-on-surface',
+                    active && 'text-on-surface after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:bg-on-surface after:content-[""]',
                   )}
                 >
                   {item.label}
@@ -65,8 +65,8 @@ export function StorefrontHeader() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'relative whitespace-nowrap pb-1 text-xs font-semibold uppercase tracking-wide text-foreground/80 transition-colors hover:text-foreground',
-                  active && 'text-foreground after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:bg-foreground after:content-[""]',
+                  'relative whitespace-nowrap pb-1 text-xs font-semibold uppercase tracking-wide text-on-surface/80 transition-colors hover:text-on-surface',
+                  active && 'text-on-surface after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:bg-on-surface after:content-[""]',
                 )}
               >
                 {item.label}

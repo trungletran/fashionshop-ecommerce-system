@@ -87,7 +87,7 @@ export default function ProductsPage() {
   const resultCount = priceRange == null ? totalResults : filteredProducts.length;
 
   return (
-    <main className="min-h-screen bg-[#f6f6f3] text-zinc-900">
+    <main className="min-h-screen bg-surface text-on-surface">
       <div className="mx-auto max-w-[1520px] px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
         <div className="grid gap-8 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-12">
           <div className="lg:sticky lg:top-8 lg:self-start">
@@ -115,7 +115,7 @@ export default function ProductsPage() {
             />
 
             {isPending ? (
-              <div className="flex min-h-[20rem] items-center justify-center text-sm uppercase tracking-[0.22em] text-zinc-400">
+              <div className="flex min-h-[20rem] items-center justify-center text-sm uppercase tracking-[0.22em] text-on-surface-variant">
                 Loading products...
               </div>
             ) : filteredProducts.length > 0 ? (
@@ -127,7 +127,7 @@ export default function ProductsPage() {
                 isLoadingMore={isFetchingNextPage}
               />
             ) : (
-              <div className="flex min-h-[20rem] items-center justify-center border border-dashed border-zinc-300 bg-white/60 text-sm uppercase tracking-[0.22em] text-zinc-400">
+              <div className="flex min-h-[20rem] items-center justify-center border border-dashed border-outline bg-surface-container-low text-sm uppercase tracking-[0.22em] text-on-surface-variant">
                 No products match the current filters.
               </div>
             )}

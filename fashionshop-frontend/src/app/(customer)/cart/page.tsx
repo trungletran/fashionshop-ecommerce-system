@@ -53,14 +53,14 @@ export default function CartPage() {
   const total = subtotal + tax + shipping;
 
   return (
-    <main className="mx-auto min-h-screen max-w-7xl px-6 py-10 font-body text-[#1a1c1c] md:px-12 lg:px-24 lg:py-14">
+    <main className="mx-auto min-h-screen max-w-7xl px-6 py-10 font-body text-on-surface md:px-12 lg:px-24 lg:py-14">
       <header className="mb-16">
         <h1 className="font-headline mb-4 text-5xl font-black uppercase tracking-[-0.06em] md:text-7xl">Your Bag</h1>
-        <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[#5e5e5e]">
+        <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-on-surface-variant">
           {itemCount} Item{itemCount !== 1 ? 's' : ''} Selected{shipping === 0 ? ' — Complimentary Shipping Applied' : ''}
         </p>
         {hasBackendError && (
-          <div className="mt-4 rounded-lg bg-[#f3f3f4] p-4 text-sm text-[#7a7a7a]">
+          <div className="mt-4 rounded-lg bg-surface-container p-4 text-sm text-on-surface-variant">
             Unable to load cart data. Showing layout while content is unavailable.
           </div>
         )}
@@ -70,21 +70,21 @@ export default function CartPage() {
         <div className="lg:col-span-8 space-y-6">
           {hasBackendError && cart.items.length === 0 &&
             [...Array(3)].map((_, i) => (
-              <Card key={`skeleton-${i}`} className="rounded-lg border-0 bg-[#f3f3f4]">
+              <Card key={`skeleton-${i}`} className="rounded-lg border-0 bg-surface-container">
                 <CardContent className="flex gap-4 p-4">
-                  <div className="h-24 w-24 rounded bg-[#e8e8e8]"></div>
+                  <div className="h-24 w-24 rounded bg-surface-container-high"></div>
                   <div className="flex-1 space-y-3">
-                    <div className="h-4 w-32 rounded bg-[#e8e8e8]"></div>
-                    <div className="h-4 w-24 rounded bg-[#e8e8e8]"></div>
-                    <div className="h-6 w-20 rounded bg-[#e8e8e8]"></div>
+                    <div className="h-4 w-32 rounded bg-surface-container-high"></div>
+                    <div className="h-4 w-24 rounded bg-surface-container-high"></div>
+                    <div className="h-6 w-20 rounded bg-surface-container-high"></div>
                   </div>
                 </CardContent>
               </Card>
             ))}
           {cart.items.map((item) => (
-            <Card key={item.itemId} className="group rounded-xl border-[#c6c6c633] bg-white">
+            <Card key={item.itemId} className="group rounded-xl border-outline-variant bg-surface-container-lowest">
               <CardContent className="flex flex-col gap-8 p-6 md:flex-row">
-                <div className="aspect-[4/5] w-full flex-shrink-0 overflow-hidden bg-[#f3f3f4] md:w-48">
+                <div className="aspect-[4/5] w-full flex-shrink-0 overflow-hidden bg-surface-container md:w-48">
                   {item.productImage ? (
                     <Image
                       alt={item.productName}
@@ -94,7 +94,7 @@ export default function CartPage() {
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-[#f3f3f4] text-4xl font-black uppercase">
+                    <div className="flex h-full w-full items-center justify-center bg-surface-container text-4xl font-black uppercase">
                       {item.productName.charAt(0)}
                     </div>
                   )}
@@ -104,7 +104,7 @@ export default function CartPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <h3 className="font-headline text-2xl font-bold tracking-tight">{item.productName}</h3>
-                      <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[#777777]">
+                      <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-on-surface-variant">
                         Studio Essential
                       </p>
                     </div>
@@ -116,7 +116,7 @@ export default function CartPage() {
                         }
                         setConfirmItemId(item.itemId);
                       }}
-                      className="hover:text-red-600 transition-colors ml-4"
+                      className="hover:text-error transition-colors ml-4"
                       aria-label="Remove item"
                     >
                       <Trash2 className="h-5 w-5" />
@@ -124,7 +124,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="mt-8 flex items-end justify-between">
-                    <div className="flex items-center space-x-6 rounded-md bg-[#f3f3f4] px-4 py-2">
+                    <div className="flex items-center space-x-6 rounded-md bg-surface-container px-4 py-2">
                       <Button
                         type="button"
                         variant="ghost"
@@ -170,7 +170,7 @@ export default function CartPage() {
 
           <div className="flex justify-start">
             <Link href="/products">
-              <button className="border-b border-black pb-1 text-xs font-bold uppercase tracking-[0.24em] transition-opacity hover:opacity-60">
+              <button className="border-b border-on-surface pb-1 text-xs font-bold uppercase tracking-[0.24em] transition-opacity hover:opacity-60">
                 Continue Shopping
               </button>
             </Link>
@@ -178,26 +178,26 @@ export default function CartPage() {
         </div>
 
         <div className="lg:col-span-4">
-          <Card className="editorial-shadow sticky top-32 overflow-hidden rounded-xl border-0 bg-white">
-            <CardHeader className="border-b border-[#efefef] px-8 py-6">
+          <Card className="editorial-shadow sticky top-32 overflow-hidden rounded-xl border-0 bg-surface-container-lowest">
+            <CardHeader className="border-b border-outline-variant px-8 py-6">
               <h2 className="font-headline text-xl font-black uppercase tracking-[-0.04em]">Summary</h2>
             </CardHeader>
             <CardContent className="space-y-8 px-8 py-8">
 
               <div className="space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#5e5e5e]">Subtotal</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">Subtotal</span>
                   <span className="font-medium">${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#5e5e5e]">Shipping</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">Shipping</span>
                   <span className="font-medium">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#5e5e5e]">Estimated Tax</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">Estimated Tax</span>
                   <span className="font-medium">${tax.toFixed(2)}</span>
                 </div>
-                <div className="mt-4 flex justify-between border-t border-[#c6c6c633] pt-4">
+                <div className="mt-4 flex justify-between border-t border-outline-variant pt-4">
                   <span className="font-headline text-lg font-black uppercase tracking-[-0.04em]">Total</span>
                   <span className="font-headline text-lg font-black">${total.toFixed(2)}</span>
                 </div>
@@ -205,18 +205,18 @@ export default function CartPage() {
 
               <div className="space-y-3">
                 {hasBackendError && (
-                  <Button asChild className="h-11 w-full rounded-md bg-black text-xs font-bold uppercase tracking-[0.24em] !text-white hover:bg-[#474747]">
-                    <Link href="/products" style={{ color: '#ffffff' }}>Browse Items</Link>
+                  <Button asChild className="h-11 w-full rounded-md bg-primary text-xs font-bold uppercase tracking-[0.24em] text-on-primary hover:opacity-90">
+                    <Link href="/products">Browse Items</Link>
                   </Button>
                 )}
-                <Button asChild className="h-11 w-full rounded-md bg-black text-xs font-bold uppercase tracking-[0.24em] !text-white transition-all duration-300 hover:scale-[1.02] hover:bg-[#474747] active:scale-95">
-                  <Link href="/checkout" style={{ color: '#ffffff' }}>Checkout</Link>
+                <Button asChild className="h-11 w-full rounded-md bg-primary text-xs font-bold uppercase tracking-[0.24em] text-on-primary transition-all duration-300 hover:scale-[1.02] hover:opacity-90 active:scale-95">
+                  <Link href="/checkout">Checkout</Link>
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   disabled={!hasChanges || quantityMutation.isPending}
-                  className="h-11 w-full rounded-md border-[#c6c6c64d] bg-white text-xs font-bold uppercase tracking-[0.24em] text-black hover:bg-[#f3f3f4]"
+                  className="h-11 w-full rounded-md border-outline bg-surface-container-lowest text-xs font-bold uppercase tracking-[0.24em] text-on-surface hover:bg-surface-container"
                   onClick={() => {
                     if (!cartQuery.data) return;
                     const changed = cartQuery.data.items.filter(
