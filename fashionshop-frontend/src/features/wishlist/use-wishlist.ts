@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useAddWishlistItemMutation, useDeleteWishlistItemMutation, useWishlistContainsQuery } from '@/features/wishlist/hooks';
+import { useAddWishlistItemMutation, useDeleteWishlistItemMutation, useWishlistContainsQuery, useWishlistQuery } from '@/features/wishlist/hooks';
 import { toast } from 'sonner';
 
 /**
@@ -22,8 +22,9 @@ export function useToggleWishlist(productId: number) {
         await addToWishlist.mutateAsync(productId);
         toast.success('Added to wishlist');
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update wishlist');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to update wishlist';
+      toast.error(message);
     }
   }, [isInWishlist, productId, addToWishlist, removeFromWishlist]);
 
@@ -37,13 +38,13 @@ export function useToggleWishlist(productId: number) {
 /**
  * Hook to get wishlist state for multiple products
  */
-export function useWishlistState(productIds: number[]) {
-  const wishlists = productIds.map(id => useWishlistContainsQuery(id));
-  
+export function useWishlistState() {
+  const { data: wishlist } = useWishlistQuery();
+  const idSet = new Set((wishlist ?? []).map((item) => item.productId));
+
   return {
     isInWishlist: (productId: number) => {
-      const index = productIds.indexOf(productId);
-      return wishlists[index]?.data || false;
+      return idSet.has(productId);
     },
   };
 }

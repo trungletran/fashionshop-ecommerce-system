@@ -14,6 +14,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface Product {
   id: number;
@@ -35,6 +36,13 @@ interface Message {
 }
 
 export function AiChatbox() {
+  const pathname = usePathname();
+  const isAdminOrStaff = pathname?.startsWith('/admin') || pathname?.startsWith('/staff');
+
+  if (isAdminOrStaff) {
+    return null;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {

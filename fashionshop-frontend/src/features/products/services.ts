@@ -1,7 +1,7 @@
 import { api, apiRequest } from '@/lib/api/http';
 import type { ApiResponse } from '@/lib/api/types';
 import type { Product, ProductFilter, UpsertProductRequest } from '@/types/product';
-import { allMockProducts, getMockProduct, addMockProduct } from '@/data/mock-data';
+import { allMockProducts, getMockProduct } from '@/data/mock-data';
 
 // TODO: Remove mock helpers once the real backend is available
 const USE_MOCK = false;

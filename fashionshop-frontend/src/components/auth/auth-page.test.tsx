@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { renderWithProviders } from '@/test/test-utils';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
@@ -14,7 +15,7 @@ describe('AuthPage', () => {
   it('renders the login form by default and switches tabs', async () => {
     const user = userEvent.setup();
 
-    render(<AuthPage />);
+    renderWithProviders(<AuthPage />);
 
     expect(screen.getByText('ACCOUNT')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
@@ -31,7 +32,7 @@ describe('AuthPage', () => {
   it('shows validation errors for the login form', async () => {
     const user = userEvent.setup();
 
-    render(<AuthPage />);
+    renderWithProviders(<AuthPage />);
 
     await user.click(screen.getByRole('button', { name: 'Sign In' }));
 

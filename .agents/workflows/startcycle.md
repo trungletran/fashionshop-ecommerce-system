@@ -1,5 +1,5 @@
 ---
-description: Do as the 
+description: Do as the ty
 ---
 
 # Autonomous E-Commerce Development Pipeline

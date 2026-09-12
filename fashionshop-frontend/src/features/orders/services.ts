@@ -183,7 +183,7 @@ export async function fetchOrders() {
 
 export async function fetchManageOrders(filter?: OrderFilter) {
   if (USE_MOCK) {
-    let filteredItems = filterOrders(mockOrders, filter);
+    const filteredItems = filterOrders(mockOrders, filter);
 
     const page = filter?.page ?? 0;
     const size = filter?.size ?? 10;

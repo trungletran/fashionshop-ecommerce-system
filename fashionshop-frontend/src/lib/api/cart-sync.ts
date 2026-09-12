@@ -14,7 +14,6 @@ import { queryKeys } from './query-keys';
  */
 export function useSyncCartWithStore() {
   const { setCart } = useCart();
-  const queryClient = useQueryClient();
 
   // Fetch cart from API
   const { data: cartData } = useQuery({

@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { addWishlistItem, checkWishlistContains, deleteWishlistItem, fetchWishlist } from './services';
 import { queryKeys } from '@/lib/api/query-keys';
 
+import { WishlistItem } from '@/types/wishlist';
+
 export function useWishlistQuery() {
   return useQuery({ queryKey: queryKeys.wishlist, queryFn: fetchWishlist });
 }
@@ -18,7 +20,7 @@ export function useAddWishlistItemMutation() {
     mutationFn: addWishlistItem,
     onMutate: async (productId: number) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.wishlist });
-      const previous = queryClient.getQueryData<unknown[]>(queryKeys.wishlist);
+      const previous = queryClient.getQueryData<WishlistItem[]>(queryKeys.wishlist);
       return { previous, productId };
     },
     onSuccess: async () => {
@@ -33,8 +35,8 @@ export function useDeleteWishlistItemMutation() {
     mutationFn: deleteWishlistItem,
     onMutate: async (productId: number) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.wishlist });
-      const previous = queryClient.getQueryData<unknown[]>(queryKeys.wishlist);
-      queryClient.setQueryData<unknown[]>(queryKeys.wishlist, (current) => (current ?? []).filter((item: any) => item.productId !== productId));
+      const previous = queryClient.getQueryData<WishlistItem[]>(queryKeys.wishlist);
+      queryClient.setQueryData<WishlistItem[]>(queryKeys.wishlist, (current) => (current ?? []).filter((item) => item.productId !== productId));
       return { previous };
     },
     onError: (_error, _productId, context) => {

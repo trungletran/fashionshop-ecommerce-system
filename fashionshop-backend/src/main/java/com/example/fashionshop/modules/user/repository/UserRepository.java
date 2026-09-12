@@ -26,4 +26,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findTop5ByOrderByCreatedAtDesc();
 
     List<User> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime from, LocalDateTime to);
+    
 }
