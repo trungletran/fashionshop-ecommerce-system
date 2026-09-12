@@ -17,6 +17,7 @@ Full-stack fashion e-commerce system with a customer storefront, staff operation
 - [API Overview](#api-overview)
 - [Useful Scripts](#useful-scripts)
 - [Troubleshooting](#troubleshooting)
+- [AI Agent Workflow](#ai-agent-workflow)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -109,6 +110,10 @@ Business logic mainly lives in `src/features`, reusable UI components live in `s
 
 ```text
 .
+|-- .agents/
+|   |-- skills/                 # AI Agent specialized skill instructions
+|   `-- workflows/startcycle.md # Automated development lifecycle workflow
+|-- AGENTS.md                   # AI Team roles and workspace rules
 |-- start.bat
 |-- database/
 |   `-- ecommerce_db.sql
@@ -532,6 +537,22 @@ Backend tests use H2 in-memory config from:
 `fashionshop-backend/src/test/resources/application.properties`
 
 That means most backend tests do not require a real MySQL instance.
+
+## AI Agent Workflow
+
+This repository includes autonomous AI agent configurations:
+
+- **[AGENTS.md](AGENTS.md)**: Defines team roles for AI pairing (`@pm`, `@engineer`, `@qa`, `@devops`).
+- **`.agents/workflows/startcycle.md`**: Implements the 4-phase automated feature development loop:
+  1. **Phase 1 (@pm)**: Analyzes requirements, writes specification to `docs/specs/`, and pauses for user approval.
+  2. **Phase 2 (@engineer)**: Generates production code in `fashionshop-backend` and `fashionshop-frontend`.
+  3. **Phase 3 (@qa)**: Runs unit tests (`mvnw.cmd test`, `npm test`) and security audits.
+  4. **Phase 4 (@devops)**: Verifies builds, environment configuration, and local startup.
+
+Trigger in supported AI IDEs (Antigravity, Cursor) with:
+```text
+/startcycle <your-feature-idea>
+```
 
 ## Contributing
 

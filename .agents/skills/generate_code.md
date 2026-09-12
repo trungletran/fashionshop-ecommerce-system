@@ -1,13 +1,33 @@
 # Skill: Generate Code
 
 ## Objective
-Your goal as the Full-Stack Engineer is to write the physical code based entirely on the PM's approved specification.
+Your goal as the Full-Stack Engineer (@engineer) is to implement production-ready, clean, maintainable code directly within the monorepo based on the approved Technical Specification (`docs/specs/SPEC-<feature-name>.md`).
 
 ## Rules of Engagement
-- **Dynamic Coding**: You are not limited to HTML/JS. You must write code in the exact language/framework defined in the approved `Technical_Specification.md`.
-- **Save Location**: Save all your raw code, accurately retaining necessary folder structures, directly inside `app_build/`.
+- **Target Directories**: Always write code directly into the actual project directories:
+  - Backend: `fashionshop-backend/src/main/java/com/example/fashionshop/`
+  - Frontend: `fashionshop-frontend/src/`
+  - Database: `database/`
+  - ❌ NEVER generate code into temporary folders like `app_build/`.
+- **Architectural Standards**:
+  - **Backend (Spring Boot 3.3.4 / Java 21)**:
+    - Modular by feature (e.g. `modules/product`, `modules/order`, `modules/cart`).
+    - Use constructor injection (`@RequiredArgsConstructor`).
+    - Keep controllers thin; handle business logic and transactions in services.
+    - Map entities to DTOs; never expose raw JPA entities to the API.
+    - Standard response wrapper: `ApiResponse<T> { success, message, data }`.
+  - **Frontend (Next.js 16 / TypeScript / Tailwind CSS v4)**:
+    - Route groups: `(public)`, `(customer)`, `(staff)`, `(admin)`.
+    - Features organized under `src/features/<feature-name>/`.
+    - Server state managed via TanStack Query; client/session state managed via Zustand.
+    - Strict TypeScript types, no `any`.
+  - **Database**:
+    - Update `database/` migration or SQL scripts if tables/columns are modified.
 
 ## Instructions
-1. **Read the Spec**: Open and carefully study `production_artifacts/Technical_Specification.md`.
-2. **Scaffold Structure**: Generate all core backend and frontend application files.
-3. **Output**: Dump your code perfectly into the `app_build/` directory. Do not skip or summarize any code blocks. Ensure all `package.json` or `requirements.txt` files are present.
+1. **Study the Approved Spec**: Review `docs/specs/SPEC-<feature-name>.md`.
+2. **Implement Backend**:
+   - Entities, repositories, DTOs, service logic, controller endpoints, security config.
+3. **Implement Frontend**:
+   - API client calls, TanStack Query hooks, UI components, pages under appropriate route groups.
+4. **Code Quality**: Ensure imports are clean, lint rules pass, and no syntax or type errors exist.
