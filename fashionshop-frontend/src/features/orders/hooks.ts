@@ -84,6 +84,10 @@ export function useMyOrderStatusQuery(orderId: string) {
   return useQuery({ queryKey: [...queryKeys.order(orderId), 'status'], queryFn: () => fetchMyOrderStatus(orderId), enabled: Boolean(orderId) });
 }
 
+export function useTrackOrderQuery(orderId?: string | number) {
+  return useMyOrderQuery(orderId ? String(orderId) : '');
+}
+
 export function useCancelMyOrderMutation(orderId: string) {
   const queryClient = useQueryClient();
   return useMutation({

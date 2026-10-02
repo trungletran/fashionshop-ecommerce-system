@@ -5,13 +5,11 @@ import {
   Sparkles, 
   Send, 
   X, 
-  MessageSquare, 
   Paperclip, 
-  Image as ImageIcon,
-  Loader2,
-  Trash2,
-  ExternalLink,
-  ChevronDown
+  Loader2, 
+  Trash2, 
+  ExternalLink, 
+  ChevronDown 
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -39,10 +37,6 @@ export function AiChatbox() {
   const pathname = usePathname();
   const isAdminOrStaff = pathname?.startsWith('/admin') || pathname?.startsWith('/staff');
 
-  if (isAdminOrStaff) {
-    return null;
-  }
-
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -62,18 +56,24 @@ export function AiChatbox() {
 
   // Show a little prompt bubble above the floating action button on initial load
   useEffect(() => {
+    if (isAdminOrStaff) return;
     const timer = setTimeout(() => {
       setShowAttentionBubble(true);
     }, 4000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isAdminOrStaff]);
 
   // Auto scroll to bottom
   useEffect(() => {
+    if (isAdminOrStaff) return;
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isAdminOrStaff]);
+
+  if (isAdminOrStaff) {
+    return null;
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -173,7 +173,7 @@ export function AiChatbox() {
         throw new Error(resData.message || 'Failed to match clothing items.');
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setMessages(prev => [...prev, {
         id: `ai-err-${Date.now()}`,
@@ -305,7 +305,7 @@ export function AiChatbox() {
                               <img 
                                 src={displayImg} 
                                 alt={prod.name} 
-                                className="h-full w-full object-cover"
+                                className="h-full w-full object-cover" 
                               />
                             </div>
                             <div className="flex-1 min-w-0">

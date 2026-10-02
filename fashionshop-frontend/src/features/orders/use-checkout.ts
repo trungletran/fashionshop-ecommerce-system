@@ -1,7 +1,12 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useCreateOrderMutation, useCheckoutSummaryQuery, useUpdateCheckoutPaymentMethodMutation } from '@/features/orders/hooks';
+import { 
+  useCreateOrderMutation, 
+  useCheckoutSummaryQuery, 
+  useUpdateCheckoutPaymentMethodMutation,
+  useTrackOrderQuery
+} from '@/features/orders/hooks';
 import { useCart } from '@/features/cart/store';
 import type { PlaceOrderRequest } from '@/types/order';
 import { toast } from 'sonner';
@@ -22,8 +27,9 @@ export function useCheckout() {
         const order = await placeOrder.mutateAsync(request);
         clearCart(); // Clear local cart after successful order
         return order;
-      } catch (error: any) {
-        toast.error(error.message || 'Failed to place order');
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to place order';
+        toast.error(message);
         throw error;
       }
     },
@@ -34,8 +40,9 @@ export function useCheckout() {
     async (paymentMethod: string) => {
       try {
         await updatePaymentMethod.mutateAsync(paymentMethod);
-      } catch (error: any) {
-        toast.error(error.message || 'Failed to update payment method');
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to update payment method';
+        toast.error(message);
       }
     },
     [updatePaymentMethod]
@@ -56,7 +63,6 @@ export function useCheckout() {
  * Hook for order tracking
  */
 export function useOrderTracking(orderId?: number) {
-  const { useTrackOrderQuery } = require('@/features/orders/hooks');
   const tracking = useTrackOrderQuery(orderId);
 
   return {
