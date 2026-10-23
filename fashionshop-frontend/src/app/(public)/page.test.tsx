@@ -1,10 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HeroSection } from '@/components/home/hero-section';
 import { ArchiveBannerSection } from '@/components/home/archive-banner-section';
 import { NewsletterSection } from '@/components/home/newsletter-section';
 import { StorefrontFooter } from '@/components/layout/storefront-footer';
 import LookbookPage from '@/app/(public)/lookbook/page';
+
+function renderWithClient(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+}
 
 describe('Homepage Navigation and Branding', () => {
   it('renders HeroSection with correct links and FashionShop branding', () => {
@@ -28,7 +39,7 @@ describe('Homepage Navigation and Branding', () => {
   });
 
   it('renders NewsletterSection with FashionShop branding', () => {
-    render(<NewsletterSection />);
+    renderWithClient(<NewsletterSection />);
 
     expect(screen.getByRole('heading', { level: 2, name: /join fashionshop/i })).toBeInTheDocument();
   });

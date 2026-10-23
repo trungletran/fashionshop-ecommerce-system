@@ -33,4 +33,7 @@ export const queryKeys = {
   // Admin
   staffAccounts: ['admin', 'staff-accounts'] as const,
   customerAccounts: ['admin', 'customer-accounts'] as const,
+
+  // Newsletter
+  newsletter: ['newsletter'] as const,
 };
