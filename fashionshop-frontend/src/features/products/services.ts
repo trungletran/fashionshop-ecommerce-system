@@ -1,10 +1,6 @@
 import { api, apiRequest } from '@/lib/api/http';
 import type { ApiResponse } from '@/lib/api/types';
 import type { Product, ProductFilter, UpsertProductRequest } from '@/types/product';
-import { allMockProducts, getMockProduct } from '@/data/mock-data';
-
-// TODO: Remove mock helpers once the real backend is available
-const USE_MOCK = false;
 
 // ---------------------------------------------------------------------------
 // Normalizers: bridge backend field names → frontend Product type
@@ -36,89 +32,31 @@ function normalizeStoreProductDetail(raw: any): Product {
 }
 
 export async function fetchProducts(filter?: ProductFilter) {
-  if (USE_MOCK) {
-    let filteredItems = [...allMockProducts];
-    if (filter?.keyword) {
-      const k = filter.keyword.toLowerCase();
-      filteredItems = filteredItems.filter(p => 
-        p.name.toLowerCase().includes(k) || 
-        p.categoryName?.toLowerCase().includes(k)
-      );
-    }
-    if (filter?.categoryId) {
-      filteredItems = filteredItems.filter(p => p.categoryId === filter.categoryId);
-    }
-    return filteredItems;
-  }
   const response = await api.get<ApiResponse<Product[]>>('/api/products', { params: filter });
   return apiRequest(Promise.resolve(response));
 }
 
 export async function fetchProduct(id: number) {
-  if (USE_MOCK) return getMockProduct(String(id));
   const response = await api.get<ApiResponse<Product>>(`/api/products/${id}`);
   return apiRequest(Promise.resolve(response));
 }
 
 export async function searchProducts(keyword: string) {
-  if (USE_MOCK) {
-    const k = keyword.toLowerCase();
-    return allMockProducts.filter(p => p.name.toLowerCase().includes(k));
-  }
   const response = await api.get<ApiResponse<Product[]>>('/api/products/search', { params: { keyword } });
   return apiRequest(Promise.resolve(response));
 }
 
-const CATEGORY_MAP: Record<number, string> = {
-  1: 'Outerwear',
-  2: 'Tailoring',
-  3: 'Bottoms',
-  4: 'Knitwear',
-  5: 'Accessories',
-  6: 'Ready-to-Wear',
-};
-
 export async function createProduct(request: UpsertProductRequest) {
-  if (USE_MOCK) {
-    const categoryName = request.categoryId ? CATEGORY_MAP[Number(request.categoryId)] : 'Uncategorized';
-    const newProduct: Product = {
-      id: Math.floor(Math.random() * 1000000),
-      ...request,
-      categoryName,
-    };
-    allMockProducts.unshift(newProduct);
-    return newProduct;
-  }
   const response = await api.post<ApiResponse<Product>>('/api/products', request);
   return apiRequest(Promise.resolve(response));
 }
 
 export async function updateProduct(id: string, request: UpsertProductRequest) {
-  if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
-    if (index !== -1) {
-      const categoryName = request.categoryId ? CATEGORY_MAP[Number(request.categoryId)] : allMockProducts[index].categoryName;
-      allMockProducts[index] = {
-        ...allMockProducts[index],
-        ...request,
-        categoryName,
-      };
-      return allMockProducts[index];
-    }
-    return { id: Number(id), ...request } as unknown as Product;
-  }
   const response = await api.put<ApiResponse<Product>>(`/api/products/${id}`, request);
   return apiRequest(Promise.resolve(response));
 }
 
 export async function deleteProduct(id: string) {
-  if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
-    if (index !== -1) {
-      allMockProducts.splice(index, 1);
-    }
-    return null;
-  }
   const response = await api.delete<ApiResponse<null>>(`/api/products/${id}`);
   return apiRequest(Promise.resolve(response));
 }
@@ -138,49 +76,20 @@ export type ManageProductsResponse = {
 };
 
 export async function fetchManageProducts(filter?: ProductFilter): Promise<ManageProductsResponse> {
-  if (USE_MOCK) {
-    let filteredItems = [...allMockProducts];
-
-    if (filter?.keyword) {
-      const k = filter.keyword.toLowerCase();
-      filteredItems = filteredItems.filter(p => 
-        p.name.toLowerCase().includes(k) || 
-        p.slug?.toLowerCase().includes(k) ||
-        p.categoryName?.toLowerCase().includes(k)
-      );
-    }
-
-    if (filter?.categoryId) {
-      filteredItems = filteredItems.filter(p => p.categoryId === Number(filter.categoryId));
-    }
-
-    const page = filter?.page ?? 0;
-    const size = filter?.size ?? 10;
-    const start = page * size;
-    const paginatedItems = filteredItems.slice(start, start + size);
-
-    return {
-      items: paginatedItems,
-      total: filteredItems.length,
-      totalItems: filteredItems.length,
-      totalPages: Math.ceil(filteredItems.length / size),
-      page,
-      size,
-      metrics: {
-        activeItems: filteredItems.length,
-        outOfStockItems: filteredItems.filter((product) => product.stockQuantity <= 0).length,
-        currentPageItems: paginatedItems.length,
-      },
-    };
-  }
   const response = await api.get<ApiResponse<any>>('/api/products/manage', { params: filter });
   const raw = await apiRequest(Promise.resolve(response));
   if (raw && Array.isArray(raw.items)) {
+    const items = raw.items.map(normalizeManageProduct);
     return {
       ...raw,
-      total: raw.total ?? raw.totalItems ?? 0,
-      totalItems: raw.totalItems ?? raw.total ?? 0,
-      items: raw.items.map(normalizeManageProduct),
+      total: raw.total ?? raw.totalItems ?? items.length,
+      totalItems: raw.totalItems ?? raw.total ?? items.length,
+      items,
+      metrics: {
+        activeItems: items.filter((p: Product) => p.isActive).length,
+        outOfStockItems: items.filter((p: Product) => p.stockQuantity <= 0).length,
+        currentPageItems: items.length,
+      },
     };
   }
   return {
@@ -194,27 +103,12 @@ export async function fetchManageProducts(filter?: ProductFilter): Promise<Manag
 }
 
 export async function fetchManageProduct(id: string) {
-  if (USE_MOCK) return getMockProduct(id);
   const response = await api.get<ApiResponse<any>>(`/api/products/manage/${id}`);
   const raw = await apiRequest(Promise.resolve(response));
   return normalizeManageProduct(raw);
 }
 
 export async function updateManageProduct(id: string, request: UpsertProductRequest) {
-  if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
-    if (index !== -1) {
-      const categoryName = request.categoryId ? CATEGORY_MAP[Number(request.categoryId)] : allMockProducts[index].categoryName;
-      allMockProducts[index] = {
-        ...allMockProducts[index],
-        ...request,
-        categoryName,
-      };
-      return allMockProducts[index];
-    }
-    return { id: Number(id), ...request } as unknown as Product;
-  }
-  
   const payload = {
     ...request,
     status: request.isActive ? 'ACTIVE' : 'INACTIVE',
@@ -226,13 +120,6 @@ export async function updateManageProduct(id: string, request: UpsertProductRequ
 }
 
 export async function deleteManageProduct(id: string) {
-  if (USE_MOCK) {
-    const index = allMockProducts.findIndex(p => String(p.id) === String(id));
-    if (index !== -1) {
-      allMockProducts.splice(index, 1);
-    }
-    return null;
-  }
   const response = await api.delete<ApiResponse<null>>(`/api/products/manage/${id}`);
   return apiRequest(Promise.resolve(response));
 }
@@ -262,7 +149,6 @@ export async function fetchStoreProducts(filter?: ProductFilter): Promise<StoreP
 }
 
 export async function fetchStoreProduct(idOrSlug: string) {
-  if (USE_MOCK) return getMockProduct(idOrSlug);
   const response = await api.get<ApiResponse<any>>(`/api/store/products/${idOrSlug}`);
   const raw = await apiRequest(Promise.resolve(response));
   return normalizeStoreProductDetail(raw);

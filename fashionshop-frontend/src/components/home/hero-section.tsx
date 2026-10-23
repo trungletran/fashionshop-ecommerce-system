@@ -7,7 +7,7 @@ export function HeroSection() {
       <div className="relative mx-auto min-h-[70svh] w-full max-w-[1440px] px-6 py-10 md:min-h-[82svh] md:px-8 lg:px-12">
         <Image
           src="/images/hero-fashion.jpg"
-          alt="18 STUDIO campaign look"
+          alt="FashionShop campaign look"
           fill
           priority
           className="object-cover object-center grayscale"
@@ -31,7 +31,7 @@ export function HeroSection() {
               SHOP THE COLLECTION
             </Link>
             <Link
-              href="/products"
+              href="/lookbook"
               className="inline-flex min-h-12 items-center justify-center border border-zinc-100/50 bg-white/8 px-6 text-[0.68rem] font-semibold tracking-[0.2em] text-white backdrop-blur-sm transition hover:bg-white/15"
             >
               VIEW LOOKBOOK

@@ -2,7 +2,7 @@ export function NewsletterSection() {
   return (
     <section className="bg-zinc-100 py-20 md:py-28">
       <div className="mx-auto w-full max-w-3xl px-6 text-center md:px-8">
-        <h2 className="text-5xl font-black uppercase tracking-tight text-zinc-900 md:text-7xl">JOIN 18.STUDIO</h2>
+        <h2 className="text-5xl font-black uppercase tracking-tight text-zinc-900 md:text-7xl">JOIN FASHIONSHOP</h2>
         <p className="mx-auto mt-4 max-w-2xl text-xs uppercase tracking-[0.16em] text-zinc-500 md:text-sm">
           Receive exclusive access to private launches and editorial insights.
         </p>

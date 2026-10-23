@@ -12,7 +12,7 @@ const footerGroups: FooterGroup[] = [
     links: [
       { label: 'Sustainability', href: '/policies#sustainability' },
       { label: 'Shipping & Returns', href: '/policies#shipping-returns' },
-      { label: 'FAQ', href: '/faq' },
+      { label: 'FAQ', href: '/policies' },
     ],
   },
   {
@@ -38,8 +38,8 @@ export function StorefrontFooter() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-12">
           <section aria-label="Brand" className="max-w-md space-y-4">
             <div className="flex items-center gap-3">
-              <Image src="/images/logo.png" alt="18.STUDIO logo" width={50} height={50} className="h-10 w-10 object-contain" />
-              <h2 className="text-xl font-semibold tracking-tight text-on-surface">18.STUDIO</h2>
+              <Image src="/images/logo.png" alt="FashionShop logo" width={50} height={50} className="h-10 w-10 object-contain" />
+              <h2 className="text-xl font-semibold tracking-tight text-on-surface">FashionShop</h2>
             </div>
             <p className="max-w-xs text-sm font-medium tracking-wide text-on-surface-variant">
               Product from vietnam, more comfortable
@@ -72,7 +72,7 @@ export function StorefrontFooter() {
       </div>
 
       <div className="border-t border-outline-variant px-4 py-6 sm:px-6 lg:px-10 xl:px-12">
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-on-surface-variant">© 2026 18.STUDIO. All rights reserved.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-on-surface-variant">© 2026 FashionShop. All rights reserved.</p>
       </div>
     </footer>
   );
