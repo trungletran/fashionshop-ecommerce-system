@@ -10,7 +10,7 @@ export function HeroSection() {
           alt="FashionShop campaign look"
           fill
           priority
-          className="object-cover object-center grayscale"
+          className="object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/35 via-black/20 to-white/10" />
 

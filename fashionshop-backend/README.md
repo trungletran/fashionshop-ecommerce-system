@@ -92,6 +92,11 @@ This project uses Spring properties in `src/main/resources/application.propertie
 | `SERVER_PORT` | No | `8080` | HTTP server port. |
 | `JWT_SECRET` | Yes | `cmVwbGFjZS13aXRoLXlvdXIt...` | JWT signing secret (Base64-encoded). Replace with a secure Base64-encoded value in production. |
 | `JWT_EXPIRATION_MS` | No | `86400000` | Access token expiration in milliseconds (24h). |
+| `CLOUDINARY_CLOUD_NAME` | Required for avatar uploads | — | Cloudinary cloud name. |
+| `CLOUDINARY_API_KEY` | Required for avatar uploads | — | Cloudinary API key. |
+| `CLOUDINARY_API_SECRET` | Required for avatar uploads | — | Cloudinary API secret; keep it in environment/secret storage. |
+
+Avatar upload uses `POST /api/me/avatar` with a multipart part named `file`. Apply `database/migrations/V3__add_user_avatar_storage_key.sql` before deployment. Only JPEG and PNG images up to 5 MB and 4096×4096 pixels are accepted.
 
 ### Running Locally
 ```bash

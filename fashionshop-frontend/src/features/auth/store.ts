@@ -12,6 +12,7 @@ type AuthState = {
   user: AuthUser | null;
   hydrated: boolean;
   setSession: (session: AuthSession) => void;
+  setUser: (user: AuthUser) => void;
   clearSession: () => void;
   setHydrated: (hydrated: boolean) => void;
 };
@@ -26,6 +27,10 @@ export const useAuthStore = create<AuthState>()(
         setStoredSession({ accessToken: session.accessToken, refreshToken: session.refreshToken, user: session.user });
         set({ token: session.accessToken, user: session.user });
       },
+      setUser: (user) => set((state) => {
+        if (state.token) setStoredSession({ accessToken: state.token, user });
+        return { user };
+      }),
       clearSession: () => {
         clearStoredSession();
         set({ token: null, user: null });

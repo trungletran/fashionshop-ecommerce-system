@@ -20,6 +20,7 @@ export type StoredAuthUser = {
   email: string;
   fullName: string;
   role: Role;
+  avatarUrl?: string;
 };
 
 export type StoredAuthSession = {

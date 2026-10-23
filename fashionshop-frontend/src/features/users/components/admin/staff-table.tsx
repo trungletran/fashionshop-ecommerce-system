@@ -56,7 +56,7 @@ export function StaffTable({ staffRows, onDelete, onActivate, isLoading }: Props
                         src={staff.avatarUrl}
                         alt={staff.fullName}
                         fill
-                        className="object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                        className="object-cover transition-all duration-300"
                       />
                     ) : (
                       <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-neutral-400">

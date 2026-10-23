@@ -39,6 +39,14 @@ echo [OK] Cau hinh .env.local da san sang.
 
 :: 4. Khoi dong Backend va Frontend
 echo.
+netstat -ano | findstr /r /c:":8080 .*LISTENING" >nul
+if not errorlevel 1 (
+    echo [ERROR] Port 8080 is already in use. Close the old backend window or stop its process, then rerun start.bat.
+    echo         The launcher will not terminate the existing process automatically.
+    pause
+    exit /b 1
+)
+
 echo [4/4] Dang khoi dong Backend va Frontend...
 start "FashionShop Backend" cmd /c "%BACKEND%\run-backend.bat"
 

@@ -50,7 +50,7 @@ export default function AdminStaffDetailsPage({ params }: { params: Promise<{ id
           <div className="w-48 h-60 bg-surface-container-high overflow-hidden rounded-md flex-shrink-0 relative">
             {staff.avatarUrl ? (
               <img
-                className="w-full h-full object-cover grayscale brightness-90"
+                className="w-full h-full object-cover"
                 src={staff.avatarUrl}
                 alt={staff.fullName}
               />

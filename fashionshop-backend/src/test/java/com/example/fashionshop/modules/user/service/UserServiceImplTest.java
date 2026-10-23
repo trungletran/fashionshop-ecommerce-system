@@ -40,6 +40,9 @@ class UserServiceImplTest {
     @Mock
     private OrderRepository orderRepository;
 
+    @Mock
+    private AvatarStorageService avatarStorageService;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -122,7 +125,7 @@ class UserServiceImplTest {
         assertEquals("jane@shop.com", response.getEmail());
         assertEquals("+1 202-555-1234", response.getPhoneNumber());
         assertEquals("123 Main St", response.getAddress());
-        assertEquals("https://cdn.shop.com/avatar/jane.png", response.getAvatarUrl());
+        assertNull(response.getAvatarUrl());
         assertEquals("Hello there", response.getBio());
     }
 

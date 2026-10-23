@@ -1,8 +1,9 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { activateAdminUser, createStaffAccount, updateStaffAccount, deleteAdminAccount, deleteAdminAccountByEmail, deleteAdminUser, fetchAdminCustomerAccounts, fetchAdminStaffAccounts, fetchCustomerAccounts, fetchMe, fetchMeUser, fetchMyOrders, fetchStaffAccounts, fetchUserProfile, updateMe, updateUserProfile } from './services';
+import { activateAdminUser, createStaffAccount, updateStaffAccount, deleteAdminAccount, deleteAdminAccountByEmail, deleteAdminUser, fetchAdminCustomerAccounts, fetchAdminStaffAccounts, fetchCustomerAccounts, fetchMe, fetchMeUser, fetchMyOrders, fetchStaffAccounts, fetchUserProfile, updateMe, updateUserProfile, uploadMyAvatar } from './services';
 import { queryKeys } from '@/lib/api/query-keys';
+import { useAuthStore } from '@/features/auth/store';
 
 export function useUserProfileQuery() {
   return useQuery({ queryKey: [...queryKeys.me, 'profile'], queryFn: fetchUserProfile });
@@ -14,6 +15,20 @@ export function useMeUserQuery() {
 
 export function useMeQuery() {
   return useQuery({ queryKey: queryKeys.me, queryFn: fetchMe });
+}
+
+export function useUploadMyAvatarMutation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: uploadMyAvatar,
+    onSuccess: async (user) => {
+      client.setQueryData(queryKeys.me, user);
+      client.setQueryData([...queryKeys.me, 'profile'], user);
+      client.setQueryData([...queryKeys.me, 'user'], user);
+      useAuthStore.getState().setUser(user);
+      await client.invalidateQueries({ queryKey: queryKeys.me });
+    },
+  });
 }
 
 export function useMyOrdersQuery() {

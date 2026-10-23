@@ -35,6 +35,9 @@ public class User {
     @Column(name = "avatar_url", length = 512)
     private String avatarUrl;
 
+    @Column(name = "avatar_storage_key", length = 255)
+    private String avatarStorageKey;
+
     @Column(length = 500)
     private String bio;
 

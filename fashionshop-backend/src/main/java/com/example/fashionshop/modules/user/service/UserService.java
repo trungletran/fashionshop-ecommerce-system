@@ -9,11 +9,14 @@ import com.example.fashionshop.modules.user.dto.UpdateStaffRequest;
 import com.example.fashionshop.modules.user.dto.UserResponse;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
     UserResponse getMyProfile();
 
     UserResponse updateMyProfile(UpdateProfileRequest request);
+
+    UserResponse updateMyAvatar(MultipartFile file);
 
     CustomerProfileResponse getCurrentCustomerProfile();
 

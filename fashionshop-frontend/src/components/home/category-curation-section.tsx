@@ -21,7 +21,7 @@ export function CategoryCurationSection() {
               className="group relative block overflow-hidden border border-zinc-200 bg-zinc-200"
             >
               <div className="relative aspect-[4/5]">
-                <Image src={category.image} alt={category.title} fill className="object-cover grayscale transition duration-500 group-hover:scale-105" />
+                <Image src={category.image} alt={category.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
               </div>
               <div className="absolute inset-x-0 bottom-0 p-4">

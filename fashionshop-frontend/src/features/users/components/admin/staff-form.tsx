@@ -210,7 +210,7 @@ export function StaffForm({ initialData }: Props) {
           </div>
         </section>
 
-        <div className="relative h-48 rounded-xl overflow-hidden grayscale contrast-125 hidden lg:block">
+        <div className="relative h-48 rounded-xl overflow-hidden hidden lg:block">
           <img
             alt="Interior of a luxury fashion studio"
             className="w-full h-full object-cover"

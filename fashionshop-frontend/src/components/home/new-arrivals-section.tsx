@@ -99,7 +99,7 @@ export function NewArrivalsSection() {
                       src={item.imageUrl || '/images/product-blazer.svg'}
                       alt={item.name}
                       fill
-                      className="object-cover grayscale transition duration-500 group-hover:scale-[1.03]"
+                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                   </div>
                 </div>

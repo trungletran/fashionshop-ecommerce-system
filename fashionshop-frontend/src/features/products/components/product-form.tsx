@@ -293,7 +293,7 @@ export function ProductForm({ initialData, redirectPath = '/admin/products' }: P
                   <img 
                     src={watchedImageUrls[0]} 
                     alt="Preview" 
-                    className="absolute inset-0 w-full h-full object-cover grayscale brightness-75 hover:grayscale-0 transition-all duration-700"
+                    className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center gap-2">

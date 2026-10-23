@@ -91,7 +91,7 @@ export default function LookbookPage() {
                   src={look.image}
                   alt={look.title}
                   fill
-                  className="object-cover grayscale transition duration-500 group-hover:scale-105"
+                  className="object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
                 <span className="absolute left-4 top-4 border border-white/20 bg-black/40 px-3 py-1 text-[0.62rem] font-bold tracking-[0.2em] text-white backdrop-blur-sm">

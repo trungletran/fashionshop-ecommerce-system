@@ -32,6 +32,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +45,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AvatarStorageService avatarStorageService;
 
     @Override
     public UserResponse getMyProfile() {
@@ -60,13 +66,62 @@ public class UserServiceImpl implements UserService {
         user.setEmail(normalizedEmail);
         user.setPhoneNumber(normalizeOptional(request.getPhoneNumber()));
         user.setAddress(normalizeOptional(request.getAddress()));
-        user.setAvatarUrl(normalizeOptional(request.getAvatarUrl()));
         user.setBio(normalizeOptional(request.getBio()));
 
         try {
             return UserMapper.toResponse(userRepository.save(user));
         } catch (DataAccessException ex) {
             throw new ProfileUpdateException("Profile update failed", ex);
+        }
+    }
+
+    @Override
+    public UserResponse updateMyAvatar(MultipartFile file) {
+        User user = getCurrentAuthenticatedUser();
+        if (!Boolean.TRUE.equals(user.getIsActive()) || resolveAccountStatus(user) != AccountStatus.ACTIVE) {
+            throw new UnauthorizedException("Account is not active");
+        }
+        if (file == null || file.isEmpty()) {
+            throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_FILE_REQUIRED", "Please select an image file");
+        }
+        if (file.getSize() > 5L * 1024 * 1024) {
+            throw new AvatarUploadException(HttpStatus.PAYLOAD_TOO_LARGE, "AVATAR_FILE_TOO_LARGE", "Image must be 5 MB or smaller");
+        }
+        String type = file.getContentType();
+        if (!"image/jpeg".equals(type) && !"image/png".equals(type)) {
+            throw new AvatarUploadException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "AVATAR_UNSUPPORTED_TYPE", "Only JPEG and PNG images are supported");
+        }
+        byte[] bytes;
+        try {
+            bytes = file.getBytes();
+            var image = ImageIO.read(new ByteArrayInputStream(bytes));
+            if (image == null || image.getWidth() > 4096 || image.getHeight() > 4096) {
+                throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_INVALID_IMAGE", "The image is invalid or exceeds 4096×4096 pixels");
+            }
+        } catch (IOException ex) {
+            throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_INVALID_IMAGE", "The image could not be read");
+        }
+        AvatarStorageService.StoredAvatar stored;
+        try {
+            stored = avatarStorageService.store(bytes, type, user.getId());
+        } catch (Exception ex) {
+            throw new AvatarUploadException(HttpStatus.BAD_GATEWAY, "AVATAR_STORAGE_FAILURE", "Avatar upload failed. Please try again.");
+        }
+        String oldKey = user.getAvatarStorageKey();
+        String oldUrl = user.getAvatarUrl();
+        user.setAvatarUrl(stored.url());
+        user.setAvatarStorageKey(stored.storageKey());
+        try {
+            UserResponse response = UserMapper.toResponse(userRepository.save(user));
+            if (oldKey != null && oldKey.startsWith("fashionshop/avatars/" + user.getId() + "/")) {
+                avatarStorageService.delete(oldKey);
+            }
+            return response;
+        } catch (DataAccessException ex) {
+            avatarStorageService.delete(stored.storageKey());
+            user.setAvatarUrl(oldUrl);
+            user.setAvatarStorageKey(oldKey);
+            throw new AvatarUploadException(HttpStatus.INTERNAL_SERVER_ERROR, "AVATAR_DATABASE_FAILURE", "Avatar could not be saved");
         }
     }
 
@@ -101,7 +156,7 @@ public class UserServiceImpl implements UserService {
                             .country(null)
                             .build())
                     .extras(CustomerProfileResponse.ProfileExtras.builder()
-                            .avatarUrl(null)
+                            .avatarUrl(user.getAvatarUrl())
                             .linkedLoginProvider(null)
                             .newsletterSubscribed(null)
                             .recentActivity(CustomerProfileResponse.RecentActivitySummary.builder()

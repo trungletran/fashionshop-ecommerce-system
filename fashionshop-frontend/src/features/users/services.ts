@@ -28,6 +28,15 @@ export async function updateMe(request: UpdateProfileRequest) {
   return apiRequest(Promise.resolve(response));
 }
 
+export async function uploadMyAvatar(file: File) {
+  const form = new FormData();
+  form.append('file', file);
+  const response = await api.post<ApiResponse<AuthUser>>('/api/me/avatar', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return apiRequest(Promise.resolve(response));
+}
+
 export async function fetchMyOrders() {
   const response = await api.get<ApiResponse<unknown[]>>('/api/me/orders');
   return apiRequest(Promise.resolve(response));
