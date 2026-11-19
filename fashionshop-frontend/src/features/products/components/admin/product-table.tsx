@@ -68,7 +68,7 @@ export function ProductTable({ products, onDelete, isLoading, editBasePath = '/a
               <td className="px-6 py-4">
                 <div className="relative w-12 h-16 mx-auto rounded overflow-hidden bg-neutral-100">
                   <img
-                    src={product.imageUrl || 'https://via.placeholder.com/150'}
+                    src={product.imageUrl || '/images/product-blazer.svg'}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
