@@ -9,6 +9,7 @@ type AuthResponseRaw = {
   userId: number;
   fullName: string;
   email: string;
+  avatarUrl?: string | null;
   role: Role;
 };
 
@@ -19,6 +20,7 @@ function mapAuthResponse(raw: AuthResponseRaw): AuthSession {
       id: String(raw.userId),
       email: raw.email,
       fullName: raw.fullName,
+      avatarUrl: raw.avatarUrl ?? undefined,
       role: raw.role,
     },
   };

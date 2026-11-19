@@ -3,6 +3,7 @@ package com.example.fashionshop.modules.user.controller;
 import com.example.fashionshop.common.exception.GlobalExceptionHandler;
 import com.example.fashionshop.common.exception.ProfileRetrievalException;
 import com.example.fashionshop.modules.user.dto.CustomerProfileResponse;
+import com.example.fashionshop.modules.user.dto.UserResponse;
 import com.example.fashionshop.modules.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,5 +80,47 @@ class UserControllerProfileTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Unable to load profile information"));
+    }
+
+    @Test
+    void updateProfile_shouldRejectInvalidAvatarUrl() throws Exception {
+        mockMvc.perform(put("/api/users/profile")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "fullName": "Jane Customer",
+                                  "email": "jane@example.com",
+                                  "avatarUrl": "javascript:alert(1)"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Avatar must be a valid http/https URL"));
+
+        verifyNoInteractions(userService);
+    }
+
+    @Test
+    void updateProfile_shouldDelegateValidLegacyPayload() throws Exception {
+        when(userService.updateMyProfile(any())).thenReturn(UserResponse.builder()
+                .id(101)
+                .fullName("Jane Updated")
+                .email("jane@example.com")
+                .avatarUrl("https://res.cloudinary.com/demo/image/upload/v1/fashionshop/avatars/101/original.png")
+                .build());
+
+        mockMvc.perform(put("/api/users/profile")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "fullName": "Jane Updated",
+                                  "email": "jane@example.com",
+                                  "avatarUrl": "https://evil.example/override.png"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.fullName").value("Jane Updated"))
+                .andExpect(jsonPath("$.data.avatarUrl").value("https://res.cloudinary.com/demo/image/upload/v1/fashionshop/avatars/101/original.png"));
     }
 }

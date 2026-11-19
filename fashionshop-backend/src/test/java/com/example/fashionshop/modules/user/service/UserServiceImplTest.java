@@ -103,6 +103,8 @@ class UserServiceImplTest {
                 .id(7)
                 .email("customer@shop.com")
                 .fullName("Old Name")
+                .avatarUrl("https://res.cloudinary.com/demo/image/upload/v1/fashionshop/avatars/7/existing.png")
+                .avatarStorageKey("fashionshop/avatars/7/existing")
                 .role(Role.CUSTOMER)
                 .isActive(true)
                 .build();
@@ -125,7 +127,8 @@ class UserServiceImplTest {
         assertEquals("jane@shop.com", response.getEmail());
         assertEquals("+1 202-555-1234", response.getPhoneNumber());
         assertEquals("123 Main St", response.getAddress());
-        assertNull(response.getAvatarUrl());
+        assertEquals("https://res.cloudinary.com/demo/image/upload/v1/fashionshop/avatars/7/existing.png", response.getAvatarUrl());
+        assertEquals("fashionshop/avatars/7/existing", customer.getAvatarStorageKey());
         assertEquals("Hello there", response.getBio());
     }
 

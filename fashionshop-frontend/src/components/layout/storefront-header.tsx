@@ -53,7 +53,12 @@ export function StorefrontHeader() {
           </nav>
 
           <div className="flex items-center justify-self-end gap-1 sm:gap-2">
-            <AccountMenu isLoggedIn={isLoggedIn} onLogout={() => clearSessionAndRedirect(router)} />
+            <AccountMenu
+              isLoggedIn={isLoggedIn}
+              avatarUrl={session.user?.avatarUrl}
+              fullName={session.user?.fullName}
+              onLogout={() => clearSessionAndRedirect(router)}
+            />
           </div>
         </div>
 

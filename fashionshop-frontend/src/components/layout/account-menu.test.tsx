@@ -67,4 +67,17 @@ describe('AccountMenu', () => {
     expect(onLogout).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId('customer-menu')).not.toBeInTheDocument();
   });
+
+  it('renders the user avatar when avatarUrl is provided', () => {
+    render(
+      <AccountMenu
+        isLoggedIn
+        avatarUrl="https://res.cloudinary.com/demo/image/upload/v1/fashionshop/avatars/3/avatar.png"
+        fullName="Jane Doe"
+        onLogout={onLogout}
+      />,
+    );
+
+    expect(screen.getByAltText('Jane Doe avatar')).toBeInTheDocument();
+  });
 });

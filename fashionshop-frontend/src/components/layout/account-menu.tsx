@@ -1,11 +1,14 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { UserRound } from 'lucide-react';
 
 type AccountMenuProps = {
   isLoggedIn: boolean;
+  avatarUrl?: string;
+  fullName?: string;
   onLogout: () => void;
 };
 
@@ -16,9 +19,11 @@ const menuItems = [
   { label: 'Order', href: '/orders', testId: 'customer-menu-order' },
 ] as const;
 
-export function AccountMenu({ isLoggedIn, onLogout }: AccountMenuProps) {
+export function AccountMenu({ isLoggedIn, avatarUrl, fullName, onLogout }: AccountMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const showAvatar = Boolean(avatarUrl && avatarUrl !== failedAvatarUrl);
 
   useEffect(() => {
     if (!isOpen) {
@@ -66,9 +71,20 @@ export function AccountMenu({ isLoggedIn, onLogout }: AccountMenuProps) {
         aria-expanded={isOpen}
         aria-haspopup="menu"
         onClick={() => setIsOpen((current) => !current)}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+        className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
       >
-        <UserRound className="h-4 w-4" />
+        {showAvatar && avatarUrl ? (
+          <Image
+            src={avatarUrl}
+            alt={fullName ? `${fullName} avatar` : 'User avatar'}
+            fill
+            sizes="36px"
+            className="object-cover"
+            onError={() => setFailedAvatarUrl(avatarUrl)}
+          />
+        ) : (
+          <UserRound className="h-4 w-4" />
+        )}
       </button>
 
       {isOpen ? (

@@ -24,11 +24,20 @@ describe('ProfileForm avatar controls', () => {
     expect(screen.getByTestId('avatar-image')).toHaveAttribute('data-src', 'blob:avatar');
   });
 
-  it('does not offer upload for an oversized file', () => {
+  it('does not offer upload for an oversized file and displays an accessible alert', () => {
     render(<ProfileForm user={user} onSubmit={vi.fn()} />);
     const file = new File([new Uint8Array(5_242_881)], 'avatar.png', { type: 'image/png' });
     fireEvent.change(screen.getByLabelText('Choose avatar image'), { target: { files: [file] } });
     expect(screen.queryByRole('button', { name: 'Upload avatar' })).not.toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('Choose a JPEG or PNG image up to 5 MiB');
+  });
+
+  it('rejects unsupported file types before upload', () => {
+    render(<ProfileForm user={user} onSubmit={vi.fn()} />);
+    const file = new File(['<svg />'], 'avatar.svg', { type: 'image/svg+xml' });
+    fireEvent.change(screen.getByLabelText('Choose avatar image'), { target: { files: [file] } });
+    expect(screen.queryByRole('button', { name: 'Upload avatar' })).not.toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('Choose a JPEG or PNG image up to 5 MiB');
   });
 
   it('cancels a preview and revokes its object URL', () => {
@@ -55,7 +64,7 @@ describe('ProfileForm avatar controls', () => {
     uploadState.isPending = false;
   });
 
-  it('clears the failed preview and keeps the saved avatar visible', () => {
+  it('clears the failed preview, shows an accessible error, and keeps the saved avatar visible', () => {
     const userWithAvatar = { ...user, avatarUrl: 'https://cdn.example/old.png' };
     uploadState.mutate.mockImplementationOnce((_file, options) => options?.onError?.(new Error('upload failed')));
     render(<ProfileForm user={userWithAvatar} onSubmit={vi.fn()} />);
@@ -64,6 +73,7 @@ describe('ProfileForm avatar controls', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Upload avatar' }));
     expect(screen.getByTestId('avatar-image')).toHaveAttribute('data-src', userWithAvatar.avatarUrl);
     expect(screen.queryByRole('button', { name: 'Upload avatar' })).not.toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('upload failed');
     uploadState.mutate.mockReset();
   });
 });

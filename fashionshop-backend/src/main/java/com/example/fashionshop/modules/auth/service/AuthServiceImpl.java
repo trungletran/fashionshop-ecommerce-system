@@ -62,6 +62,7 @@ public class AuthServiceImpl implements AuthService {
                     .userId(savedUser.getId())
                     .fullName(savedUser.getFullName())
                     .email(savedUser.getEmail())
+                    .avatarUrl(savedUser.getAvatarUrl())
                     .role(savedUser.getRole())
                     .build();
         } catch (Exception exception) {
@@ -87,6 +88,7 @@ public class AuthServiceImpl implements AuthService {
                     .userId(user.getId())
                     .fullName(user.getFullName())
                     .email(user.getEmail())
+                    .avatarUrl(user.getAvatarUrl())
                     .role(user.getRole())
                     .build();
         } catch (AuthStatusException ex) {

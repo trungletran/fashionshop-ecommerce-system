@@ -8,10 +8,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import com.example.fashionshop.modules.user.service.AvatarUploadException;
 
 import java.util.HashMap;
@@ -29,6 +32,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                 .body(ApiResponse.error("AVATAR_FILE_TOO_LARGE", "Image must be 5 MiB or smaller"));
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMissingServletRequestPart(MissingServletRequestPartException ex) {
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error("AVATAR_FILE_REQUIRED", "Please select an image file"));
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMultipart(MultipartException ex) {
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error("AVATAR_INVALID_IMAGE", "Invalid multipart upload request"));
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(ApiResponse.error("UNSUPPORTED_MEDIA_TYPE", "Unsupported content type"));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

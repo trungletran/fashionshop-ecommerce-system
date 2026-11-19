@@ -25,22 +25,34 @@ export function ProfileForm({ user, onSubmit }: { user: AuthUser; onSubmit: (val
   const form = useForm<ProfileFormValues>({ resolver: zodResolver(profileSchema), defaultValues: { fullName: user.fullName, email: user.email ?? '', phoneNumber: user.phoneNumber ?? '' } });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const upload = useUploadMyAvatarMutation();
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+
+  const savedAvatarSrc = user.avatarUrl && user.avatarUrl !== failedAvatarUrl ? user.avatarUrl : null;
+  const displayedAvatarSrc = preview || savedAvatarSrc;
+
   function selectFile(selected?: File) {
     if (!selected) return;
     if (!['image/jpeg', 'image/png'].includes(selected.type) || selected.size > MAX_AVATAR_BYTES) {
-      toast.error('Choose a JPEG or PNG image up to 5 MiB');
+      const message = 'Choose a JPEG or PNG image up to 5 MiB';
+      setAvatarError(message);
+      toast.error(message);
+      if (input.current) input.current.value = '';
       return;
     }
+    setAvatarError(null);
     if (preview) URL.revokeObjectURL(preview);
     setFile(selected);
     setPreview(URL.createObjectURL(selected));
   }
   function cancelAvatar() {
     if (preview) URL.revokeObjectURL(preview);
-    setPreview(null); setFile(null);
+    setPreview(null);
+    setFile(null);
+    setAvatarError(null);
     if (input.current) input.current.value = '';
   }
 
@@ -50,18 +62,73 @@ export function ProfileForm({ user, onSubmit }: { user: AuthUser; onSubmit: (val
         <h2 className="font-headline text-sm font-bold uppercase tracking-[0.15em]">Profile photo</h2>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-4 border-white bg-surface-container">
-            {(preview || user.avatarUrl) ? <Image src={preview || user.avatarUrl!} alt="Avatar preview" fill unoptimized className="object-cover" /> : <div className="flex h-full items-center justify-center text-2xl font-bold">{user.fullName.charAt(0).toUpperCase()}</div>}
+            {displayedAvatarSrc ? (
+              <Image
+                src={displayedAvatarSrc}
+                alt="Avatar preview"
+                fill
+                unoptimized
+                className="object-cover"
+                onError={() => {
+                  if (!preview && user.avatarUrl) {
+                    setFailedAvatarUrl(user.avatarUrl);
+                  }
+                }}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-2xl font-bold">
+                {(user.fullName?.charAt(0) || 'U').toUpperCase()}
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <label htmlFor="avatar-file" className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">Choose a new image</label>
-            <input id="avatar-file" ref={input} type="file" accept="image/jpeg,image/png" aria-label="Choose avatar image" disabled={upload.isPending} onChange={(event) => selectFile(event.target.files?.[0])} className="block w-full max-w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-xs file:font-bold file:uppercase file:tracking-wide file:text-on-primary hover:file:opacity-80" />
-            <p className="mt-2 text-xs text-on-surface-variant">JPEG or PNG, up to 5 MiB</p>
+            <input
+              id="avatar-file"
+              ref={input}
+              type="file"
+              accept="image/jpeg,image/png"
+              aria-label="Choose avatar image"
+              aria-describedby={avatarError ? 'avatar-file-error' : 'avatar-file-hint'}
+              disabled={upload.isPending}
+              onChange={(event) => selectFile(event.target.files?.[0])}
+              className="block w-full max-w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-xs file:font-bold file:uppercase file:tracking-wide file:text-on-primary hover:file:opacity-80"
+            />
+            <p id="avatar-file-hint" className="mt-2 text-xs text-on-surface-variant">JPEG or PNG, up to 5 MiB</p>
+            {avatarError ? (
+              <p id="avatar-file-error" role="alert" className="text-xs font-medium text-red-600">
+                {avatarError}
+              </p>
+            ) : null}
           </div>
         </div>
-        {file && <div className="flex gap-2">
-          <Button type="button" disabled={upload.isPending} onClick={() => upload.mutate(file, { onSuccess: () => { toast.success('Avatar updated'); cancelAvatar(); }, onError: (error) => { cancelAvatar(); toast.error(error.message || 'Avatar upload failed'); } })}>{upload.isPending ? 'Uploading…' : 'Upload avatar'}</Button>
-          <Button type="button" disabled={upload.isPending} variant="outline" onClick={cancelAvatar}>Cancel</Button>
-        </div>}
+        {file && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button
+              type="button"
+              disabled={upload.isPending}
+              onClick={() =>
+                upload.mutate(file, {
+                  onSuccess: () => {
+                    toast.success('Avatar updated');
+                    cancelAvatar();
+                  },
+                  onError: (error) => {
+                    const message = error.message || 'Avatar upload failed';
+                    cancelAvatar();
+                    setAvatarError(message);
+                    toast.error(message);
+                  },
+                })
+              }
+            >
+              {upload.isPending ? 'Uploading…' : 'Upload avatar'}
+            </Button>
+            <Button type="button" disabled={upload.isPending} variant="outline" onClick={cancelAvatar}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </section>
       <FormField<ProfileFormValues> label="Full name" name="fullName" register={form.register} error={form.formState.errors.fullName} />
       <FormField<ProfileFormValues> label="Email" name="email" register={form.register} error={form.formState.errors.email} />

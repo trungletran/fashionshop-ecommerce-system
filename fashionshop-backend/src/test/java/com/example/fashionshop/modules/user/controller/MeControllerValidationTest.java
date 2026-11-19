@@ -5,6 +5,7 @@ import com.example.fashionshop.common.exception.OrderListLoadException;
 import com.example.fashionshop.common.response.PaginationResponse;
 import com.example.fashionshop.modules.order.dto.OrderSummaryResponse;
 import com.example.fashionshop.modules.order.service.OrderService;
+import com.example.fashionshop.modules.user.dto.UserResponse;
 import com.example.fashionshop.modules.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,52 @@ class MeControllerValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Email format is invalid"));
+    }
+
+    @Test
+    void singleAvatarPartShouldReturnUpdatedUserResponse() throws Exception {
+        MockMultipartFile file = AvatarMultipartTestFixtures.file("avatar.png", new byte[]{1, 2, 3});
+        UserResponse updated = UserResponse.builder()
+                .id(3)
+                .fullName("Jane Doe")
+                .email("jane@example.com")
+                .avatarUrl("https://res.cloudinary.com/demo/image/upload/v1/fashionshop/avatars/3/avatar.png")
+                .build();
+        when(userService.updateMyAvatar(any())).thenReturn(updated);
+
+        mockMvc.perform(AvatarMultipartTestFixtures.request(file))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Avatar updated successfully"))
+                .andExpect(jsonPath("$.data.avatarUrl").value(updated.getAvatarUrl()));
+    }
+
+    @Test
+    void missingAvatarPartShouldReturnAvatarFileRequired() throws Exception {
+        mockMvc.perform(multipart("/api/me/avatar"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.code").value("AVATAR_FILE_REQUIRED"));
+
+        org.mockito.Mockito.verifyNoInteractions(userService);
+    }
+
+    @Test
+    void updateMyProfileShouldRejectInvalidAvatarUrl() throws Exception {
+        mockMvc.perform(put("/api/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "fullName": "Jane Doe",
+                                  "email": "jane@example.com",
+                                  "avatarUrl": "not-a-url"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Avatar must be a valid http/https URL"));
+
+        org.mockito.Mockito.verifyNoInteractions(userService);
     }
 
     @Test

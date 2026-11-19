@@ -3,6 +3,7 @@ package com.example.fashionshop.modules.user.service;
 import com.example.fashionshop.common.enums.AccountStatus;
 import com.example.fashionshop.common.enums.Role;
 import com.example.fashionshop.modules.order.repository.OrderRepository;
+import com.example.fashionshop.modules.user.dto.UserResponse;
 import com.example.fashionshop.modules.user.entity.User;
 import com.example.fashionshop.modules.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -184,7 +185,6 @@ class UserAvatarServiceTest {
         user.setAvatarStorageKey("foreign-user-key");
         when(storage.store(any(), anyString(), anyInt()))
                 .thenReturn(new AvatarStorageService.StoredAvatar("new-url", "fashionshop/avatars/4/new"));
-        doThrow(new IllegalStateException("cleanup unavailable")).when(storage).delete("foreign-user-key");
         when(userRepository.save(user)).thenReturn(user);
 
         UserResponse response = service.updateMyAvatar(validPng());
@@ -219,5 +219,19 @@ class UserAvatarServiceTest {
         assertEquals("old-url", user.getAvatarUrl());
         assertEquals("legacy-key", user.getAvatarStorageKey());
         verify(storage).delete("fashionshop/avatars/4/new");
+    }
+
+    @Test void databaseFailureStillRestoresOldAvatarWhenRollbackCleanupThrows() throws Exception {
+        User user = login();
+        when(storage.store(any(), anyString(), anyInt()))
+                .thenReturn(new AvatarStorageService.StoredAvatar("new-url", "fashionshop/avatars/4/new"));
+        when(userRepository.save(user)).thenThrow(new DataIntegrityViolationException("db down"));
+        doThrow(new IllegalStateException("cleanup failed"))
+                .when(storage).delete("fashionshop/avatars/4/new");
+
+        assertEquals("AVATAR_DATABASE_FAILURE", assertThrows(AvatarUploadException.class,
+                () -> service.updateMyAvatar(validPng())).getCode());
+        assertEquals("old-url", user.getAvatarUrl());
+        assertEquals("legacy-key", user.getAvatarStorageKey());
     }
 }

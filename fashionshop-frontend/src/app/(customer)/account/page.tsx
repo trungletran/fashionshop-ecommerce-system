@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { EmptyState } from '@/components/common/empty-state';
@@ -11,6 +12,7 @@ import { useMyOrdersQuery as useOrdersQueryFromOrders } from '@/features/orders/
 export default function AccountPage() {
   const meQuery = useMeQuery();
   const ordersQuery = useOrdersQueryFromOrders();
+  const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
   const hasBackendError = meQuery.isError || ordersQuery.isError;
 
   if (meQuery.isPending || ordersQuery.isPending) return <LoadingState />;
@@ -31,8 +33,18 @@ export default function AccountPage() {
       <section className="mb-8 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm md:p-10">
         <div className="flex flex-col items-center gap-7 sm:flex-row sm:items-start md:gap-10">
           <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-full border-4 border-surface-container bg-surface-container sm:h-40 sm:w-40">
-            {user?.avatarUrl ? <Image alt={user.fullName} src={user.avatarUrl} fill sizes="(max-width: 640px) 128px, 160px" className="object-cover" /> :
-              <div className="flex h-full w-full items-center justify-center text-5xl font-black uppercase text-on-surface-variant">{user?.fullName?.charAt(0).toUpperCase() ?? 'U'}</div>}
+            {user?.avatarUrl && user.avatarUrl !== failedAvatarUrl ? (
+              <Image
+                alt={user.fullName}
+                src={user.avatarUrl}
+                fill
+                sizes="(max-width: 640px) 128px, 160px"
+                className="object-cover"
+                onError={() => setFailedAvatarUrl(user.avatarUrl ?? null)}
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-5xl font-black uppercase text-on-surface-variant">{user?.fullName?.charAt(0).toUpperCase() ?? 'U'}</div>
+            )}
           </div>
           <div className="min-w-0 flex-1 text-center sm:text-left">
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-on-surface-variant">Your account</p>

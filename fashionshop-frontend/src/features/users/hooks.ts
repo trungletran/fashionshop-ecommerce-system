@@ -39,7 +39,10 @@ export function useUpdateProfileMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateUserProfile,
-    onSuccess: async () => {
+    onSuccess: async (user) => {
+      queryClient.setQueryData(queryKeys.me, user);
+      queryClient.setQueryData([...queryKeys.me, 'profile'], user);
+      useAuthStore.getState().setUser(user);
       await queryClient.invalidateQueries({ queryKey: queryKeys.me });
     },
   });
@@ -49,7 +52,10 @@ export function useUpdateMeMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateMe,
-    onSuccess: async () => {
+    onSuccess: async (user) => {
+      queryClient.setQueryData(queryKeys.me, user);
+      queryClient.setQueryData([...queryKeys.me, 'profile'], user);
+      useAuthStore.getState().setUser(user);
       await queryClient.invalidateQueries({ queryKey: queryKeys.me });
     },
   });

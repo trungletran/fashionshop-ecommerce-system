@@ -25,6 +25,7 @@ import com.example.fashionshop.modules.user.dto.UserResponse;
 import com.example.fashionshop.modules.user.entity.User;
 import com.example.fashionshop.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +44,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -136,13 +138,16 @@ public class UserServiceImpl implements UserService {
             if (ImageIO.read(new ByteArrayInputStream(bytes)) == null) {
                 throw invalidImage();
             }
-        } catch (IOException ex) {
+        } catch (AvatarUploadException ex) {
+            throw ex;
+        } catch (IOException | RuntimeException ex) {
             throw invalidImage();
         }
         AvatarStorageService.StoredAvatar stored;
         try {
             stored = avatarStorageService.store(bytes, type, user.getId());
         } catch (Exception ex) {
+            log.error("Avatar storage upload failed for userId={} ({} bytes): {}", user.getId(), bytes.length, ex.getMessage());
             throw new AvatarUploadException(HttpStatus.BAD_GATEWAY, "AVATAR_STORAGE_FAILURE", "Avatar upload failed. Please try again.");
         }
         String oldKey = user.getAvatarStorageKey();
@@ -151,18 +156,24 @@ public class UserServiceImpl implements UserService {
         user.setAvatarStorageKey(stored.storageKey());
         try {
             UserResponse response = UserMapper.toResponse(userRepository.save(user));
+            log.info("Avatar updated for userId={} ({} bytes)", user.getId(), bytes.length);
             if (oldKey != null && oldKey.startsWith("fashionshop/avatars/" + user.getId() + "/")) {
                 try {
                     avatarStorageService.delete(oldKey);
-                } catch (RuntimeException ignored) {
-                    // Old-asset cleanup is best effort after the new profile is committed.
+                } catch (RuntimeException cleanupEx) {
+                    log.warn("Best-effort cleanup of previous avatar failed for userId={}: {}", user.getId(), cleanupEx.getMessage());
                 }
             }
             return response;
         } catch (DataAccessException ex) {
-            avatarStorageService.delete(stored.storageKey());
+            try {
+                avatarStorageService.delete(stored.storageKey());
+            } catch (RuntimeException cleanupEx) {
+                log.warn("Best-effort rollback cleanup of uncommitted avatar failed for userId={}: {}", user.getId(), cleanupEx.getMessage());
+            }
             user.setAvatarUrl(oldUrl);
             user.setAvatarStorageKey(oldKey);
+            log.error("Avatar persistence failed for userId={}: {}", user.getId(), ex.getMessage());
             throw new AvatarUploadException(HttpStatus.INTERNAL_SERVER_ERROR, "AVATAR_DATABASE_FAILURE", "Avatar could not be saved");
         }
     }

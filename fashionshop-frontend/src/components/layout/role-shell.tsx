@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils/cn';
@@ -25,6 +27,8 @@ export function RoleShell({ role, children }: { role: 'STAFF' | 'ADMIN'; childre
   const pathname = usePathname();
   const router = useRouter();
   const session = useAuthSession();
+  const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
+  const avatarUrl = session.user?.avatarUrl && session.user.avatarUrl !== failedAvatarUrl ? session.user.avatarUrl : null;
 
   return (
     <div className="min-h-screen bg-surface font-body text-on-surface">
@@ -61,8 +65,19 @@ export function RoleShell({ role, children }: { role: 'STAFF' | 'ADMIN'; childre
 
           <div className="px-6 mt-auto">
             <div className="flex items-center gap-3 p-3 bg-surface-container rounded-lg mb-4">
-              <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-[10px] text-white font-bold">
-                {session.user?.fullName?.split(' ').map(n => n[0]).join('') ?? 'AD'}
+              <div className="relative w-8 h-8 flex-shrink-0 overflow-hidden rounded-full bg-primary-container flex items-center justify-center text-[10px] text-white font-bold">
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt={session.user?.fullName ?? 'User avatar'}
+                    fill
+                    sizes="32px"
+                    className="object-cover"
+                    onError={() => setFailedAvatarUrl(session.user?.avatarUrl ?? null)}
+                  />
+                ) : (
+                  session.user?.fullName?.split(' ').map(n => n[0]).join('') ?? 'AD'
+                )}
               </div>
               <div>
                 <p className="text-xs font-bold">{session.user?.fullName ?? 'Admin User'}</p>
