@@ -31,9 +31,7 @@ export async function updateMe(request: UpdateProfileRequest) {
 export async function uploadMyAvatar(file: File) {
   const form = new FormData();
   form.append('file', file);
-  const response = await api.post<ApiResponse<AuthUser>>('/api/me/avatar', form, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const response = await api.post<ApiResponse<AuthUser>>('/api/me/avatar', form);
   return apiRequest(Promise.resolve(response));
 }
 

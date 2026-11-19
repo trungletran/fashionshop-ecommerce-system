@@ -34,6 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Locale;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.ImageIO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,22 +87,57 @@ public class UserServiceImpl implements UserService {
         if (file == null || file.isEmpty()) {
             throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_FILE_REQUIRED", "Please select an image file");
         }
-        if (file.getSize() > 5L * 1024 * 1024) {
-            throw new AvatarUploadException(HttpStatus.PAYLOAD_TOO_LARGE, "AVATAR_FILE_TOO_LARGE", "Image must be 5 MB or smaller");
+        final long maxBytes = 5_242_880L;
+        if (file.getSize() > maxBytes) {
+            throw new AvatarUploadException(HttpStatus.PAYLOAD_TOO_LARGE, "AVATAR_FILE_TOO_LARGE", "Image must be 5 MiB or smaller");
         }
         String type = file.getContentType();
         if (!"image/jpeg".equals(type) && !"image/png".equals(type)) {
             throw new AvatarUploadException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "AVATAR_UNSUPPORTED_TYPE", "Only JPEG and PNG images are supported");
         }
+        String filename = file.getOriginalFilename();
+        String extension = filename == null ? "" : filename.substring(filename.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
+        if (("image/jpeg".equals(type) && !("jpg".equals(extension) || "jpeg".equals(extension)))
+                || ("image/png".equals(type) && !"png".equals(extension))) {
+            throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_INVALID_IMAGE", "The image type and file extension do not match");
+        }
         byte[] bytes;
         try {
             bytes = file.getBytes();
-            var image = ImageIO.read(new ByteArrayInputStream(bytes));
-            if (image == null || image.getWidth() > 4096 || image.getHeight() > 4096) {
-                throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_INVALID_IMAGE", "The image is invalid or exceeds 4096×4096 pixels");
+            int width;
+            int height;
+            String format;
+            try (ImageInputStream imageInput = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes))) {
+                if (imageInput == null) {
+                    throw invalidImage();
+                }
+                var readers = ImageIO.getImageReaders(imageInput);
+                if (!readers.hasNext()) {
+                    throw invalidImage();
+                }
+                ImageReader reader = readers.next();
+                try {
+                    reader.setInput(imageInput, true, true);
+                    format = reader.getFormatName().toLowerCase(Locale.ROOT);
+                    boolean allowedFormat = "jpeg".equals(format) || "jpg".equals(format) || "png".equals(format);
+                    if (!allowedFormat || ("image/png".equals(type) && !"png".equals(format))
+                            || ("image/jpeg".equals(type) && !("jpeg".equals(format) || "jpg".equals(format)))) {
+                        throw invalidImage();
+                    }
+                    width = reader.getWidth(0);
+                    height = reader.getHeight(0);
+                } finally {
+                    reader.dispose();
+                }
+            }
+            if (!isDimensionAllowed(width, height)) {
+                throw invalidImage();
+            }
+            if (ImageIO.read(new ByteArrayInputStream(bytes)) == null) {
+                throw invalidImage();
             }
         } catch (IOException ex) {
-            throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_INVALID_IMAGE", "The image could not be read");
+            throw invalidImage();
         }
         AvatarStorageService.StoredAvatar stored;
         try {
@@ -114,7 +152,11 @@ public class UserServiceImpl implements UserService {
         try {
             UserResponse response = UserMapper.toResponse(userRepository.save(user));
             if (oldKey != null && oldKey.startsWith("fashionshop/avatars/" + user.getId() + "/")) {
-                avatarStorageService.delete(oldKey);
+                try {
+                    avatarStorageService.delete(oldKey);
+                } catch (RuntimeException ignored) {
+                    // Old-asset cleanup is best effort after the new profile is committed.
+                }
             }
             return response;
         } catch (DataAccessException ex) {
@@ -123,6 +165,19 @@ public class UserServiceImpl implements UserService {
             user.setAvatarStorageKey(oldKey);
             throw new AvatarUploadException(HttpStatus.INTERNAL_SERVER_ERROR, "AVATAR_DATABASE_FAILURE", "Avatar could not be saved");
         }
+    }
+
+    private AvatarUploadException invalidImage() {
+        return new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_INVALID_IMAGE", "The image is invalid or exceeds the allowed dimensions");
+    }
+
+    static boolean isDimensionAllowed(int width, int height) {
+        return width > 0 && height > 0 && width <= 4096 && height <= 4096
+                && isPixelCountAllowed((long) width * height);
+    }
+
+    static boolean isPixelCountAllowed(long pixels) {
+        return pixels > 0 && pixels <= 16_777_216L;
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +55,19 @@ class MeControllerValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Email format is invalid"));
+    }
+
+    @Test
+    void duplicateAvatarPartsShouldBeRejectedBeforeServiceUpload() throws Exception {
+        MockMultipartFile first = new MockMultipartFile("file", "one.png", "image/png", new byte[]{1});
+        MockMultipartFile second = new MockMultipartFile("file", "two.png", "image/png", new byte[]{2});
+
+        mockMvc.perform(multipart("/api/me/avatar").file(first).file(second))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.code").value("AVATAR_MULTIPLE_FILES"));
+
+        org.mockito.Mockito.verifyNoInteractions(userService);
     }
 
     @Test

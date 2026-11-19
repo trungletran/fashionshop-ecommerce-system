@@ -17,6 +17,8 @@ const profileSchema = z.object({
   phoneNumber: z.string().optional(),
 });
 
+const MAX_AVATAR_BYTES = 5_242_880;
+
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export function ProfileForm({ user, onSubmit }: { user: AuthUser; onSubmit: (values: ProfileFormValues) => void }) {
@@ -28,8 +30,8 @@ export function ProfileForm({ user, onSubmit }: { user: AuthUser; onSubmit: (val
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
   function selectFile(selected?: File) {
     if (!selected) return;
-    if (!['image/jpeg', 'image/png'].includes(selected.type) || selected.size > 5 * 1024 * 1024) {
-      toast.error('Choose a JPEG or PNG image up to 5 MB');
+    if (!['image/jpeg', 'image/png'].includes(selected.type) || selected.size > MAX_AVATAR_BYTES) {
+      toast.error('Choose a JPEG or PNG image up to 5 MiB');
       return;
     }
     if (preview) URL.revokeObjectURL(preview);
@@ -53,11 +55,11 @@ export function ProfileForm({ user, onSubmit }: { user: AuthUser; onSubmit: (val
           <div className="space-y-2">
             <label htmlFor="avatar-file" className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">Choose a new image</label>
             <input id="avatar-file" ref={input} type="file" accept="image/jpeg,image/png" aria-label="Choose avatar image" disabled={upload.isPending} onChange={(event) => selectFile(event.target.files?.[0])} className="block w-full max-w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-xs file:font-bold file:uppercase file:tracking-wide file:text-on-primary hover:file:opacity-80" />
-            <p className="mt-2 text-xs text-on-surface-variant">JPEG or PNG, up to 5 MB</p>
+            <p className="mt-2 text-xs text-on-surface-variant">JPEG or PNG, up to 5 MiB</p>
           </div>
         </div>
         {file && <div className="flex gap-2">
-          <Button type="button" disabled={upload.isPending} onClick={() => upload.mutate(file, { onSuccess: () => { toast.success('Avatar updated'); cancelAvatar(); }, onError: (error) => toast.error(error.message || 'Avatar upload failed') })}>{upload.isPending ? 'Uploading…' : 'Upload avatar'}</Button>
+          <Button type="button" disabled={upload.isPending} onClick={() => upload.mutate(file, { onSuccess: () => { toast.success('Avatar updated'); cancelAvatar(); }, onError: (error) => { cancelAvatar(); toast.error(error.message || 'Avatar upload failed'); } })}>{upload.isPending ? 'Uploading…' : 'Upload avatar'}</Button>
           <Button type="button" disabled={upload.isPending} variant="outline" onClick={cancelAvatar}>Cancel</Button>
         </div>}
       </section>

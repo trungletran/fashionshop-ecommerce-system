@@ -11,6 +11,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import com.example.fashionshop.modules.user.service.AvatarUploadException;
 
 import java.util.HashMap;
@@ -22,6 +23,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AvatarUploadException.class)
     public ResponseEntity<ApiResponse<Object>> handleAvatarUpload(AvatarUploadException ex) {
         return ResponseEntity.status(ex.getStatus()).body(ApiResponse.error(ex.getCode(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(ApiResponse.error("AVATAR_FILE_TOO_LARGE", "Image must be 5 MiB or smaller"));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

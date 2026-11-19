@@ -8,6 +8,7 @@ import com.example.fashionshop.modules.order.service.OrderService;
 import com.example.fashionshop.modules.user.dto.UpdateProfileRequest;
 import com.example.fashionshop.modules.user.dto.UserResponse;
 import com.example.fashionshop.modules.user.service.UserService;
+import com.example.fashionshop.modules.user.service.AvatarUploadException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/me")
@@ -42,8 +45,15 @@ public class MeController {
     }
 
     @PostMapping(value = "/avatar", consumes = "multipart/form-data")
-    public ApiResponse<UserResponse> updateMyAvatar(@RequestPart("file") MultipartFile file) {
-        return ApiResponse.success("Avatar updated successfully", userService.updateMyAvatar(file));
+    public ApiResponse<UserResponse> updateMyAvatar(
+            @RequestPart(value = "file", required = false) List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_FILE_REQUIRED", "Please select an image file");
+        }
+        if (files.size() != 1) {
+            throw new AvatarUploadException(HttpStatus.BAD_REQUEST, "AVATAR_MULTIPLE_FILES", "Exactly one avatar file must be provided");
+        }
+        return ApiResponse.success("Avatar updated successfully", userService.updateMyAvatar(files.get(0)));
     }
 
     @GetMapping("/orders")
