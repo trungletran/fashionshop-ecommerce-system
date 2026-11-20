@@ -7,7 +7,6 @@ Use this checklist when implementing a new feature to ensure proper integration 
 - [ ] Create feature folder: `src/features/[feature]/`
 - [ ] Create TypeScript types in `src/types/[feature].ts`
 - [ ] Create API query keys in `src/lib/api/query-keys.ts`
-- [ ] Add to AGENTS.md if it has new conventions
 
 ## State Management Setup
 
@@ -248,7 +247,6 @@ export function useAddToCart(productId: number, quantity: number) {
 - [ ] Accessibility compliant
 - [ ] Performance optimized
 - [ ] Documentation complete
-- [ ] Code follows AGENTS.md conventions
 
 ---
 

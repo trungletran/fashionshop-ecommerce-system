@@ -17,7 +17,6 @@ Full-stack fashion e-commerce system with a customer storefront, staff operation
 - [API Overview](#api-overview)
 - [Useful Scripts](#useful-scripts)
 - [Troubleshooting](#troubleshooting)
-- [AI Agent Workflow](#ai-agent-workflow)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -110,10 +109,6 @@ Business logic mainly lives in `src/features`, reusable UI components live in `s
 
 ```text
 .
-|-- .agents/
-|   `-- skills/                 # GitHub Spec Kit AI agent skills (speckit-*)
-|-- .specify/                   # Spec Kit constitution, templates, and scripts
-|-- AGENTS.md                   # AI Team roles and workspace rules
 |-- start.bat
 |-- database/
 |   `-- ecommerce_db.sql
@@ -537,18 +532,6 @@ Backend tests use H2 in-memory config from:
 `fashionshop-backend/src/test/resources/application.properties`
 
 That means most backend tests do not require a real MySQL instance.
-
-## AI Agent Workflow
-
-This repository uses **GitHub Spec Kit** skills in `.agents/skills/` together with project rules in [AGENTS.md](AGENTS.md) and `.specify/memory/constitution.md`:
-
-1. **`speckit-specify`**: Create `specs/<id>-<feature>/spec.md` from a feature description.
-2. **`speckit-clarify`** *(optional)*: Clarify underspecified requirements directly into `spec.md`.
-3. **`speckit-plan`**: Generate `plan.md`, `research.md`, `data-model.md`, `contracts/`, and `quickstart.md`.
-4. **`speckit-tasks`**: Generate dependency-ordered tasks in `tasks.md`.
-5. **`speckit-analyze`** *(recommended)* & **`speckit-checklist`** *(optional)*: Cross-check consistency and quality before coding.
-6. **`speckit-implement`**: Execute tasks in `tasks.md` with backend (`mvnw.cmd test`) and frontend (`npm run lint`, `npm run test:run`) verification.
-7. **`speckit-converge`** *(when resuming/auditing)*: Compare the codebase against spec/plan/tasks and append any remaining work to `tasks.md`.
 
 ## Contributing
 

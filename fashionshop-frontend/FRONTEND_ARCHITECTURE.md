@@ -400,7 +400,3 @@ src/
 2. **Implement Features**: Use the patterns above for new features
 3. **Test Integration**: Verify component interactions with React DevTools
 4. **Monitor State**: Use Redux/Zustand DevTools to debug state flow
-
----
-
-For questions or improvements, refer to AGENTS.md conventions.
