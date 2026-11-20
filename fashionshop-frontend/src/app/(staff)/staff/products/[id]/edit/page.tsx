@@ -14,13 +14,13 @@ export default function StaffEditProductPage({ params }: Props) {
   const { id } = use(params);
   const { data: product, isLoading, error } = useManageProductQuery(id);
 
-  if (isLoading) return <LoadingState label="Loading product data..." />;
-  
+  if (isLoading) return <LoadingState label="Loading product data" />;
+
   if (error || !product) {
     return (
-      <div className="max-w-7xl mx-auto px-10 py-12">
-        <EmptyState 
-          title="Product Not Found" 
+      <div className="mx-auto max-w-7xl">
+        <EmptyState
+          title="Product Not Found"
           description="The product you are trying to edit does not exist or has been removed."
           actionLabel="Back to Catalog"
           actionHref="/staff/products"
@@ -30,7 +30,7 @@ export default function StaffEditProductPage({ params }: Props) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-10 py-12">
+    <div className="mx-auto max-w-7xl">
       <ProductForm initialData={product} redirectPath="/staff/products" />
     </div>
   );

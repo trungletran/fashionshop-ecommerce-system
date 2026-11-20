@@ -6,13 +6,23 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { LoadingState } from '@/components/common/loading-state';
 import { EmptyState } from '@/components/common/empty-state';
+import { ConfirmDialog } from '@/components/common/confirm-dialog';
+import { PageHeader } from '@/components/common/page-header';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useManageCategoriesQuery, useCreateCategoryMutation, useDeleteCategoryMutation, useActivateCategoryMutation } from '@/features/categories/hooks';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  useManageCategoriesQuery,
+  useCreateCategoryMutation,
+  useDeleteCategoryMutation,
+  useActivateCategoryMutation,
+} from '@/features/categories/hooks';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils/cn';
 
 const categorySchema = z.object({
-  name: z.string().min(2),
+  name: z.string().min(2, 'Category name must be at least 2 characters'),
   description: z.string().optional(),
 });
 
@@ -29,6 +39,8 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
   const activateMutation = useActivateCategoryMutation();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
     defaultValues: { name: '', description: '' },
@@ -49,54 +61,43 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
   if (categoriesQuery.isLoading) return <LoadingState label="Loading categories" />;
 
   return (
-    <div className="max-w-7xl mx-auto p-4 lg:p-8 space-y-10 min-h-screen">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase font-headline text-black">
-            Categories
-          </h1>
-          <p className="text-sm text-neutral-500 font-body max-w-2xl">
-            Create and review product categories used across the storefront and management screens.
-          </p>
-        </div>
-
-        <div className="flex gap-4">
-          <Button
-            type="button"
-            onClick={() => setIsCreateOpen((value) => !value)}
-            className="flex items-center gap-2 px-8 py-3 bg-black text-white hover:bg-zinc-800 transition-all active:scale-95 rounded-md"
-          >
-            <span className="material-symbols-outlined text-lg text-white">
+    <div className="mx-auto max-w-7xl space-y-8">
+      <PageHeader
+        eyebrow="Catalog Structure"
+        title="Categories"
+        description="Create and manage product categories used across the storefront and console."
+        action={
+          <Button type="button" onClick={() => setIsCreateOpen((value) => !value)}>
+            <span className="material-symbols-outlined text-base">
               {isCreateOpen ? 'close' : 'add'}
             </span>
-            <span className="font-label text-xs tracking-widest uppercase font-bold text-white">
-              {isCreateOpen ? 'Close Form' : 'Add Category'}
-            </span>
+            <span>{isCreateOpen ? 'Close Form' : 'Add Category'}</span>
           </Button>
-        </div>
-      </header>
+        }
+      />
 
-      <div className="grid grid-cols-12 gap-6 mb-12">
-        <div className="col-span-12 md:col-span-4 bg-surface-container-low p-8 rounded-xl">
-          <p className="font-label text-[10px] tracking-widest uppercase text-neutral-500 mb-1">
+      {/* KPI + Search */}
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-12 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs md:col-span-4">
+          <p className="font-label text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant">
             Total Categories
           </p>
-          <p className="font-headline text-3xl font-bold tracking-tighter">
+          <p className="font-headline mt-2 text-3xl font-black tracking-tight text-primary">
             {categories.length.toLocaleString()}
           </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-green-600">
+          <div className="mt-3 flex items-center gap-2 text-xs text-emerald-700">
             <span className="material-symbols-outlined text-sm">inventory_2</span>
             <span>Available for product assignment</span>
           </div>
         </div>
 
-        <div className="col-span-12 md:col-span-8 bg-surface-container-low p-8 rounded-xl flex items-center">
+        <div className="col-span-12 flex items-center rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs md:col-span-8">
           <div className="relative w-full">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">
+            <span className="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-lg text-outline">
               search
             </span>
-            <input
-              className="w-full bg-white border border-neutral-200 rounded-lg py-3 pl-10 pr-4 text-xs font-body focus:ring-1 focus:ring-black outline-none transition-all"
+            <Input
+              className="pl-10"
               placeholder="Search by category name or description..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -105,13 +106,18 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
         </div>
       </div>
 
+      {/* Inline Create Form */}
       {isCreateOpen ? (
-        <section className="rounded-3xl border border-neutral-200 bg-surface-container-lowest p-8 shadow-sm">
-          <div className="mb-8">
-            <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-neutral-400">New category</span>
-            <h2 className="mt-3 text-2xl font-black tracking-tight font-headline text-black">Add to catalog</h2>
-            <p className="mt-2 text-sm text-neutral-500">
-              Keep the naming clean and use the description to clarify what products belong in this group.
+        <section className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs sm:p-8">
+          <div className="mb-6 border-b border-outline-variant/50 pb-4">
+            <span className="font-label text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
+              New Category
+            </span>
+            <h2 className="font-headline mt-1 text-xl font-black uppercase tracking-tight text-primary">
+              Add to Catalog
+            </h2>
+            <p className="mt-1 text-xs text-on-surface-variant">
+              Keep naming concise and describe which products belong in this group.
             </p>
           </div>
 
@@ -127,156 +133,162 @@ export function CategoryManagementView({ emptyActionHref }: CategoryManagementVi
               }),
             )}
           >
-            <div className="col-span-12 lg:col-span-4 space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.24em] text-neutral-500">Category name</label>
-              <input
+            <div className="col-span-12 space-y-2 lg:col-span-4">
+              <Label htmlFor="category-name">Category Name</Label>
+              <Input
+                id="category-name"
                 {...form.register('name')}
                 type="text"
                 placeholder="e.g. Outerwear"
-                className={cn(
-                  'w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-black outline-none transition-all placeholder:text-neutral-300 focus:ring-1 focus:ring-black',
-                  form.formState.errors.name && 'border-red-400/70'
-                )}
+                aria-invalid={Boolean(form.formState.errors.name)}
               />
               {form.formState.errors.name ? (
-                <p className="text-xs text-red-500">{form.formState.errors.name.message}</p>
+                <p className="text-xs font-medium text-error">{form.formState.errors.name.message}</p>
               ) : null}
             </div>
 
-            <div className="col-span-12 lg:col-span-8 space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.24em] text-neutral-500">Description</label>
-              <textarea
+            <div className="col-span-12 space-y-2 lg:col-span-8">
+              <Label htmlFor="category-description">Description</Label>
+              <Textarea
+                id="category-description"
                 {...form.register('description')}
-                rows={4}
-                placeholder="Describe the kind of products that should appear in this category."
-                className={cn(
-                  'w-full resize-none rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-black outline-none transition-all placeholder:text-neutral-300 focus:ring-1 focus:ring-black',
-                  form.formState.errors.description && 'border-red-400/70'
-                )}
+                rows={3}
+                className="min-h-24"
+                placeholder="Describe the products that belong in this category."
+                aria-invalid={Boolean(form.formState.errors.description)}
               />
               {form.formState.errors.description ? (
-                <p className="text-xs text-red-500">{form.formState.errors.description.message}</p>
+                <p className="text-xs font-medium text-error">{form.formState.errors.description.message}</p>
               ) : null}
             </div>
 
-            <div className="col-span-12 flex items-center gap-4 pt-2">
-              <Button
-                type="submit"
-                disabled={createMutation.isPending}
-                className="bg-black text-white px-8 rounded-md text-[10px] font-bold tracking-widest uppercase hover:bg-neutral-800"
-              >
-                {createMutation.isPending ? 'Creating...' : 'Create Category'}
+            <div className="col-span-12 flex items-center gap-3 border-t border-outline-variant/50 pt-5">
+              <Button type="submit" disabled={createMutation.isPending}>
+                {createMutation.isPending ? 'Creating…' : 'Create Category'}
               </Button>
-              <button
-                type="button"
-                onClick={() => setIsCreateOpen(false)}
-                className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 hover:text-black"
-              >
+              <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                 Cancel
-              </button>
+              </Button>
             </div>
           </form>
         </section>
       ) : null}
 
-      <div className="space-y-8">
-        <div className="rounded-3xl border border-neutral-200 bg-surface-container-lowest p-3 shadow-sm overflow-x-auto">
-          {categories.length === 0 ? (
+      {/* Table */}
+      <div className="overflow-x-auto rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-xs">
+        {categories.length === 0 ? (
+          <div className="p-6">
             <EmptyState
               title="No categories"
-              description="Create the first category to organize products in the dashboard and storefront."
+              description="Create the first category to organize products in the console and storefront."
               actionLabel="Create category"
               actionHref={emptyActionHref}
             />
-          ) : (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-neutral-100">
-                  <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Category Name</th>
-                  <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Description</th>
-                  <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold text-center">Status</th>
-                  <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold text-right">Actions</th>
+          </div>
+        ) : (
+          <table className="w-full border-collapse text-left">
+            <thead className="border-b border-outline-variant/60 bg-surface-container-low">
+              <tr>
+                <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                  Category Name
+                </th>
+                <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                  Description
+                </th>
+                <th className="px-6 py-4 text-center font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-right font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-outline-variant/40 font-body">
+              {filteredCategories.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-16 text-center text-sm text-on-surface-variant">
+                    No matching categories found.
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-50 font-body">
-                {filteredCategories.length === 0 ? (
-                  <tr>
-                    <td colSpan={2} className="px-6 py-20 text-center text-neutral-500 text-sm">
-                      No categories found
+              ) : (
+                filteredCategories.map((category) => (
+                  <tr key={category.id} className="transition-colors hover:bg-surface-container-low/60">
+                    <td className="px-6 py-4">
+                      <p className="text-sm font-bold text-primary">{category.name}</p>
+                      <p className="font-label text-[10px] uppercase tracking-wider text-outline">
+                        ID: {String(category.id).toUpperCase()}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-sm leading-relaxed text-on-surface-variant">
+                        {category.description?.trim() || 'No description provided yet.'}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {category.isActive ? (
+                        <Badge variant="success">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                          Active
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">
+                          <span className="h-1.5 w-1.5 rounded-full bg-outline" />
+                          Inactive
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {category.isActive ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-error/30 text-error hover:border-error hover:bg-error-container/30"
+                          onClick={() => setDeleteId(String(category.id))}
+                          disabled={deleteMutation.isPending}
+                        >
+                          Deactivate
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-emerald-300 text-emerald-700 hover:border-emerald-600 hover:bg-emerald-50"
+                          onClick={() =>
+                            activateMutation.mutate(category.id, {
+                              onSuccess: () => toast.success('Category activated'),
+                            })
+                          }
+                          disabled={activateMutation.isPending}
+                        >
+                          Activate
+                        </Button>
+                      )}
                     </td>
                   </tr>
-                ) : (
-                  filteredCategories.map((category) => {
-                    return (
-                      <tr key={category.id} className="hover:bg-surface-container-low/50 group">
-                        <td className="px-6 py-4">
-                          <div>
-                            <p className="font-bold text-sm text-black">{category.name}</p>
-                            <p className="text-[10px] text-neutral-400 uppercase">
-                              ID: {String(category.id).toUpperCase()}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <p className="text-sm text-neutral-600 leading-relaxed">
-                            {category.description?.trim() || 'No description provided yet.'}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          {category.isActive ? (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium">
-                              <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
-                              Active
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-xs font-medium">
-                              <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
-                              Inactive
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          {category.isActive ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                              onClick={() => {
-                                if (window.confirm('Delete this category? This will hide all products in this category.')) {
-                                  deleteMutation.mutate(category.id, {
-                                    onSuccess: () => toast.success('Category deleted')
-                                  });
-                                }
-                              }}
-                              disabled={deleteMutation.isPending}
-                            >
-                              Delete
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
-                              onClick={() => {
-                                activateMutation.mutate(category.id, {
-                                  onSuccess: () => toast.success('Category activated')
-                                });
-                              }}
-                              disabled={activateMutation.isPending}
-                            >
-                              Activate
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
+
+      <ConfirmDialog
+        open={Boolean(deleteId)}
+        title="Deactivate category?"
+        description="Deactivating this category will hide products assigned to it from storefront listings."
+        confirmLabel="Deactivate"
+        destructive
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => {
+          if (!deleteId) return;
+          deleteMutation.mutate(deleteId, {
+            onSuccess: () => {
+              toast.success('Category deactivated');
+              setDeleteId(null);
+            },
+          });
+        }}
+      />
     </div>
   );
 }

@@ -3,6 +3,9 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
 import { useCreateStaffAccountMutation, useUpdateStaffAccountMutation } from '@/features/users/hooks';
 import type { StaffAccount } from '@/types/user';
 
@@ -31,18 +34,23 @@ export function StaffForm({ initialData }: Props) {
       role: initialData?.role?.toLowerCase() || '',
       password: '',
       confirmPassword: '',
-    }
+    },
   });
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const onSubmit: SubmitHandler<StaffFormValues> = (data) => {
     if (initialData) {
-      updateMutation.mutate({ fullName: data.fullName, email: data.email, role: data.role.toUpperCase() }, {
-        onSuccess: () => {
-          toast.success('Staff member updated successfully');
-          router.push('/admin/staff-accounts');
+      updateMutation.mutate(
+        { fullName: data.fullName, email: data.email, role: data.role.toUpperCase() },
+        {
+          onSuccess: () => {
+            toast.success('Staff member updated successfully');
+            router.push('/admin/staff-accounts');
+          },
+          onError: (err: { message?: string }) => toast.error(err?.message || 'Failed to update'),
         },
-        onError: (err: any) => toast.error(err.message || 'Failed to update')
-      });
+      );
       return;
     }
 
@@ -61,108 +69,131 @@ export function StaffForm({ initialData }: Props) {
       return;
     }
 
-    createMutation.mutate({
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-      role: data.role.toUpperCase()
-    }, {
-      onSuccess: () => {
-        toast.success('Staff member created successfully');
-        router.push('/admin/staff-accounts');
+    createMutation.mutate(
+      {
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        role: data.role.toUpperCase(),
       },
-      onError: (err: any) => toast.error(err.message || 'Failed to create')
-    });
+      {
+        onSuccess: () => {
+          toast.success('Staff member created successfully');
+          router.push('/admin/staff-accounts');
+        },
+        onError: (err: { message?: string }) => toast.error(err?.message || 'Failed to create'),
+      },
+    );
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-10">
-      <div className="col-span-12 lg:col-span-7 flex flex-col gap-10">
-        <section className="bg-surface-container-lowest p-10 rounded-xl">
-          <div className="mb-8">
-            <span className="text-[10px] tracking-widest text-neutral-400 uppercase font-bold">Step 01</span>
-            <h3 className="text-xl font-bold tracking-tight font-headline mt-1">Personal Information</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-8">
+      <div className="col-span-12 flex flex-col gap-8 lg:col-span-7">
+        {/* Step 01 */}
+        <section className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs sm:p-8">
+          <div className="mb-6 border-b border-outline-variant/50 pb-4">
+            <span className="font-label text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
+              Step 01
+            </span>
+            <h3 className="font-headline mt-1 text-lg font-black uppercase tracking-tight text-primary">
+              Personal Information
+            </h3>
           </div>
-          <div className="grid gap-8">
-            <div className="group">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-2 block group-focus-within:text-black transition-colors">Full Name</label>
-              <input
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="staff-full-name">Full Name</Label>
+              <Input
+                id="staff-full-name"
                 {...register('fullName')}
                 required
-                className="w-full border-b border-outline-variant/30 bg-transparent py-3 focus:outline-none focus:border-black transition-all font-medium text-sm placeholder:text-neutral-300"
                 placeholder="e.g. Alexander McQueen"
                 type="text"
               />
             </div>
-            <div className="grid grid-cols-2 gap-8">
-              <div className="group">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-2 block group-focus-within:text-black transition-colors">Email Address</label>
-                <input
-                  {...register('email')}
-                  required
-                  className="w-full border-b border-outline-variant/30 bg-transparent py-3 focus:outline-none focus:border-black transition-all font-medium text-sm placeholder:text-neutral-300"
-                  placeholder="alexander@18studio.com"
-                  type="email"
-                />
-              </div>
-              <div className="group">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-2 block group-focus-within:text-black transition-colors">Phone Number</label>
-                <input
-                  {...register('phone')}
-                  className="w-full border-b border-outline-variant/30 bg-transparent py-3 focus:outline-none focus:border-black transition-all font-medium text-sm placeholder:text-neutral-300"
-                  placeholder="+1 (555) 000-0000"
-                  type="tel"
-                />
-              </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="staff-email">Email Address</Label>
+              <Input
+                id="staff-email"
+                {...register('email')}
+                required
+                placeholder="alexander@18studio.com"
+                type="email"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="staff-phone">Phone Number</Label>
+              <Input
+                id="staff-phone"
+                {...register('phone')}
+                placeholder="+84 900 000 000"
+                type="tel"
+              />
             </div>
           </div>
         </section>
 
-        <section className="bg-surface-container-lowest p-10 rounded-xl">
-          <div className="mb-8">
-            <span className="text-[10px] tracking-widest text-neutral-400 uppercase font-bold">Step 02</span>
-            <h3 className="text-xl font-bold tracking-tight font-headline mt-1">Access Role</h3>
+        {/* Step 02 */}
+        <section className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs sm:p-8">
+          <div className="mb-6 border-b border-outline-variant/50 pb-4">
+            <span className="font-label text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
+              Step 02
+            </span>
+            <h3 className="font-headline mt-1 text-lg font-black uppercase tracking-tight text-primary">
+              Access Role
+            </h3>
           </div>
-          <div className="relative group">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-2 block group-focus-within:text-black transition-colors">Assign Role</label>
-            <select
-              {...register('role')}
-              required
-              className="w-full border-b border-outline-variant/30 bg-transparent py-3 focus:outline-none focus:border-black transition-all font-medium text-sm appearance-none cursor-pointer"
-            >
-              <option disabled value="">Select a role...</option>
+
+          <div className="space-y-2">
+            <Label htmlFor="staff-role">Assign Role</Label>
+            <Select id="staff-role" {...register('role')} required>
+              <option disabled value="">
+                Select a role...
+              </option>
               <option value="admin">Admin</option>
               <option value="staff">Staff</option>
-            </select>
-            <span className="material-symbols-outlined absolute right-0 bottom-4 pointer-events-none text-neutral-400">expand_more</span>
+            </Select>
           </div>
-          <p className="mt-4 text-[10px] text-neutral-400 leading-relaxed italic">Admins have full console access. Staff members are limited by the permissions selected below.</p>
+          <p className="mt-3 text-xs text-on-surface-variant">
+            Admins have full console access. Staff members can manage products, categories, and orders.
+          </p>
         </section>
 
-        <section className="bg-surface-container-lowest p-10 rounded-xl">
-          <div className="mb-8">
-            <span className="text-[10px] tracking-widest text-neutral-400 uppercase font-bold">Step 03</span>
-            <h3 className="text-xl font-bold tracking-tight font-headline mt-1">Security Credentials</h3>
+        {/* Step 03 */}
+        <section className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs sm:p-8">
+          <div className="mb-6 border-b border-outline-variant/50 pb-4">
+            <span className="font-label text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
+              Step 03
+            </span>
+            <h3 className="font-headline mt-1 text-lg font-black uppercase tracking-tight text-primary">
+              Security Credentials
+            </h3>
           </div>
-          <div className="grid grid-cols-2 gap-8">
-            <div className="group">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-2 block group-focus-within:text-black transition-colors">{initialData ? 'New Password (Optional)' : 'Temporary Password'}</label>
-              <input
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="staff-password">
+                {initialData ? 'New Password (Optional)' : 'Temporary Password'}
+              </Label>
+              <Input
+                id="staff-password"
                 {...register('password')}
                 required={!initialData}
-                className="w-full border-b border-outline-variant/30 bg-transparent py-3 focus:outline-none focus:border-black transition-all font-medium text-sm placeholder:text-neutral-300"
-                placeholder="Enter password"
+                placeholder="••••••••"
                 type="password"
               />
             </div>
-            <div className="group">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-2 block group-focus-within:text-black transition-colors">Confirm Password</label>
-              <input
+
+            <div className="space-y-2">
+              <Label htmlFor="staff-confirm-password">Confirm Password</Label>
+              <Input
+                id="staff-confirm-password"
                 {...register('confirmPassword')}
                 required={!initialData}
-                className="w-full border-b border-outline-variant/30 bg-transparent py-3 focus:outline-none focus:border-black transition-all font-medium text-sm placeholder:text-neutral-300"
-                placeholder="Confirm password"
+                placeholder="••••••••"
                 type="password"
               />
             </div>
@@ -170,56 +201,57 @@ export function StaffForm({ initialData }: Props) {
         </section>
       </div>
 
-      <div className="col-span-12 lg:col-span-5 flex flex-col gap-10">
-        <section className="bg-black text-white p-10 rounded-xl sticky top-10">
-          <div className="mb-10">
-            <span className="text-[10px] tracking-widest text-neutral-500 uppercase font-bold">Final Step</span>
-            <h3 className="text-xl font-bold tracking-tight font-headline mt-1">Granular Permissions</h3>
+      {/* Right Column: Permissions & Submit */}
+      <div className="col-span-12 flex flex-col gap-6 lg:col-span-5">
+        <section className="sticky top-8 rounded-xl bg-primary p-7 text-on-primary shadow-xl sm:p-8">
+          <div className="mb-8 border-b border-white/15 pb-5">
+            <span className="font-label text-[10px] font-bold uppercase tracking-[0.24em] text-on-primary/60">
+              Final Step
+            </span>
+            <h3 className="font-headline mt-1 text-lg font-black uppercase tracking-tight">
+              Role Capabilities
+            </h3>
           </div>
-          <div className="flex flex-col gap-6">
+
+          <div className="flex flex-col gap-4">
             {[
-              'View Orders',
-              'Manage Products',
-              'Edit Customers',
-              'View Financial Reports',
-              'Manage Staff Accounts',
-              'Inventory Adjustments'
+              'View & Fulfill Orders',
+              'Manage Products & Stock',
+              'Manage Categories',
+              'View Customer Accounts',
+              'Manage Staff Accounts (Admin)',
+              'Access Sales Reports',
             ].map((perm) => (
-              <label key={perm} className="flex items-center justify-between group cursor-pointer">
-                <span className="text-xs font-medium tracking-wide text-neutral-300 group-hover:text-white transition-colors">{perm}</span>
-                <input className="form-checkbox h-4 w-4 bg-transparent border-neutral-600 rounded-sm text-white focus:ring-0 focus:ring-offset-0 transition-all checked:bg-neutral-400" type="checkbox" defaultChecked />
+              <label key={perm} className="group flex cursor-pointer items-center justify-between gap-3">
+                <span className="text-xs font-medium tracking-wide text-on-primary/80 transition-colors group-hover:text-on-primary">
+                  {perm}
+                </span>
+                <input
+                  className="h-4 w-4 cursor-pointer rounded-sm border-white/30 bg-transparent accent-white"
+                  type="checkbox"
+                  defaultChecked
+                />
               </label>
             ))}
           </div>
 
-          <div className="mt-12 pt-10 border-t border-neutral-800">
+          <div className="mt-10 border-t border-white/15 pt-6">
             <button
               type="submit"
-              disabled={createMutation.isPending || updateMutation.isPending}
-              className="w-full bg-white text-black py-4 rounded-md font-bold text-xs uppercase tracking-widest hover:bg-neutral-200 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+              disabled={isSubmitting}
+              className="h-12 w-full cursor-pointer rounded-md bg-surface-container-lowest font-label text-xs font-bold uppercase tracking-[0.2em] text-primary transition-all hover:bg-surface-container active:scale-[0.99] disabled:opacity-50"
             >
-              {createMutation.isPending || updateMutation.isPending ? 'Processing...' : initialData ? 'Save Changes' : 'Create Account'}
+              {isSubmitting ? 'Processing…' : initialData ? 'Save Changes' : 'Create Account'}
             </button>
             <button
               type="button"
-              className="block w-full text-center mt-6 text-[10px] uppercase tracking-widest font-bold text-neutral-500 hover:text-white transition-colors"
+              className="mt-4 block w-full cursor-pointer text-center font-label text-[11px] font-bold uppercase tracking-[0.18em] text-on-primary/60 transition-colors hover:text-on-primary"
               onClick={() => router.back()}
             >
               Cancel & Discard
             </button>
           </div>
         </section>
-
-        <div className="relative h-48 rounded-xl overflow-hidden hidden lg:block">
-          <img
-            alt="Interior of a luxury fashion studio"
-            className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnnFF-lecJDuGlbxjXRziflQ4lvbWtcD2l38IDFBvKxqp42X76VpArJLbHSQ9GaG2kyvej7oucfv0-lx_nuuAvbhwHLmnbnZwTXqIdDvD55VPvvFkdM-798ate2PpYzWEw1LQ_xOz39_jlD1I2vLqisDVNsATRrOC2Cd6DBnZPFBsFPFfIoIFnlAIEJ4qK3Jd7kb9CaksKZrtwM0IYKE-HDOm16SyBVBBWqxCr22jWFCih9394_B2jps9JQr61TII_ujrd9uG-YcAv"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-            <p className="text-[10px] font-medium tracking-widest text-white/80 uppercase">Internal Console · Studio Member Registration</p>
-          </div>
-        </div>
       </div>
     </form>
   );

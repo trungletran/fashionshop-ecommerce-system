@@ -1,11 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-
 import { useMemo, useState } from 'react';
 import { StaffTable } from '@/features/users/components/admin/staff-table';
 import { ConfirmDialog } from '@/components/common/confirm-dialog';
-import { useAdminStaffAccountsQuery, useDeleteAdminUserMutation, useActivateAdminUserMutation } from '@/features/users/hooks';
+import { PageHeader } from '@/components/common/page-header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  useAdminStaffAccountsQuery,
+  useDeleteAdminUserMutation,
+  useActivateAdminUserMutation,
+} from '@/features/users/hooks';
 import { toast } from 'sonner';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils/cn';
@@ -28,7 +34,7 @@ export default function AdminStaffAccountsPage() {
       },
       onError: () => {
         toast.error('Failed to restore staff account');
-      }
+      },
     });
   };
 
@@ -38,8 +44,8 @@ export default function AdminStaffAccountsPage() {
         s.fullName.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         s.email.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         String(s.id).toLowerCase().includes(debouncedSearch.toLowerCase());
-      const matchStatus = 
-        statusFilter === 'all' || 
+      const matchStatus =
+        statusFilter === 'all' ||
         (statusFilter === 'active' && s.isActive !== false) ||
         (statusFilter === 'inactive' && s.isActive === false);
 
@@ -56,48 +62,41 @@ export default function AdminStaffAccountsPage() {
       },
       onError: () => {
         toast.error('Failed to deactivate account');
-      }
+      },
     });
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-8">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-        <div>
-          <h2 className="text-4xl font-extrabold tracking-tighter font-headline mb-2 uppercase text-black">
-            Staff Accounts
-          </h2>
-          <p className="text-neutral-500 text-sm font-body">
-            Manage your store&apos;s administrative and staff access.
-          </p>
-        </div>
-        <div className="flex gap-4">
-          <Link
-            href="/admin/staff-accounts/new"
-            className="flex items-center gap-2 px-8 py-3 bg-black text-white hover:bg-zinc-800 transition-all active:scale-95 rounded-md"
-          >
-            <span className="material-symbols-outlined text-lg text-white">add</span>
-            <span className="font-label text-xs tracking-widest uppercase font-bold text-white">Add Staff Member</span>
-          </Link>
-        </div>
-      </div>
+    <div className="mx-auto max-w-7xl space-y-8">
+      <PageHeader
+        eyebrow="Access Control"
+        title="Staff Accounts"
+        description="Manage administrative and staff access across the studio console."
+        action={
+          <Button asChild>
+            <Link href="/admin/staff-accounts/new">
+              <span className="material-symbols-outlined text-base">add</span>
+              <span>Add Staff Member</span>
+            </Link>
+          </Button>
+        }
+      />
 
-      {/* Filters & Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] tracking-widest uppercase font-bold text-neutral-400 mr-2 font-label">
-            Filter by:
+      <div className="grid grid-cols-12 items-center gap-4">
+        <div className="col-span-12 flex flex-wrap items-center gap-2 lg:col-span-8">
+          <span className="mr-1 font-label text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+            Filter:
           </span>
           {(['all', 'active', 'inactive'] as const).map((status) => (
             <button
               key={status}
+              type="button"
               onClick={() => setStatusFilter(status)}
               className={cn(
-                "px-4 py-1.5 text-xs font-semibold rounded-full transition-all uppercase tracking-wider",
+                'cursor-pointer rounded-full px-4 py-2 font-label text-[11px] font-bold uppercase tracking-[0.16em] transition-colors',
                 statusFilter === status
-                  ? "bg-black text-white shadow-md"
-                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
+                  ? 'bg-primary text-on-primary'
+                  : 'border border-outline-variant/60 bg-surface-container-lowest text-on-surface-variant hover:border-primary hover:text-primary',
               )}
             >
               {status}
@@ -105,13 +104,13 @@ export default function AdminStaffAccountsPage() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3 flex-1 max-w-md">
-          <div className="relative w-full group">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-lg">
+        <div className="col-span-12 lg:col-span-4">
+          <div className="relative w-full">
+            <span className="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-lg text-outline">
               search
             </span>
-            <input
-              className="w-full bg-white border border-neutral-200 rounded-md pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-black outline-none transition-all placeholder:text-neutral-400 font-body"
+            <Input
+              className="pl-10"
               placeholder="Search staff by name, email or ID..."
               type="text"
               value={searchTerm}
@@ -131,7 +130,7 @@ export default function AdminStaffAccountsPage() {
       <ConfirmDialog
         open={Boolean(deleteId)}
         title="Deactivate staff account?"
-        description="Are you sure you want to deactivate this account? Access will be revokedImmediately but data will be preserved."
+        description="Are you sure you want to deactivate this account? Access will be revoked immediately while account history is preserved."
         destructive
         confirmLabel="Deactivate"
         onOpenChange={(open) => !open && setDeleteId(null)}

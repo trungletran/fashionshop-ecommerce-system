@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils/cn";
-import { useCategoriesQuery } from "@/features/categories/hooks";
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils/cn';
+import { useCategoriesQuery } from '@/features/categories/hooks';
 
 type Props = {
   categoryId: number | null;
@@ -17,26 +18,26 @@ export function AdminProductsFilters({
   const { data: categories = [] } = useCategoriesQuery();
 
   const categoryTabs: Array<{ label: string; value: number | null }> = [
-    { label: "All", value: null },
+    { label: 'All', value: null },
     ...categories.map((c) => ({
       label: c.name,
       value: Number(c.id),
-    }))
+    })),
   ];
 
   return (
-    <div className="grid grid-cols-12 gap-6 mb-8">
-      {/* Category Tabs */}
-      <div className="col-span-12 lg:col-span-8 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+    <div className="mb-8 grid grid-cols-12 items-center gap-4">
+      <div className="scrollbar-hide col-span-12 flex gap-2 overflow-x-auto pb-1 lg:col-span-8">
         {categoryTabs.map((tab) => (
           <button
             key={tab.label}
+            type="button"
             onClick={() => onCategoryChange(tab.value)}
             className={cn(
-              "px-5 py-2 rounded-full text-xs font-bold tracking-widest uppercase whitespace-nowrap transition-all",
+              'cursor-pointer whitespace-nowrap rounded-full px-4 py-2 font-label text-[11px] font-bold uppercase tracking-[0.16em] transition-colors',
               categoryId === tab.value
-                ? "bg-black text-white"
-                : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
+                ? 'bg-primary text-on-primary'
+                : 'border border-outline-variant/60 bg-surface-container-lowest text-on-surface-variant hover:border-primary hover:text-primary',
             )}
           >
             {tab.label}
@@ -44,14 +45,13 @@ export function AdminProductsFilters({
         ))}
       </div>
 
-      {/* Search Bar */}
-      <div className="col-span-12 lg:col-span-4 flex items-center gap-3">
+      <div className="col-span-12 lg:col-span-4">
         <div className="relative w-full">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">
+          <span className="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-lg text-outline">
             search
           </span>
-          <input
-            className="w-full bg-white border border-neutral-200 rounded-lg py-2 pl-10 pr-4 text-xs font-body focus:ring-1 focus:ring-black outline-none transition-all"
+          <Input
+            className="pl-10"
             placeholder="Search by name, SKU or category..."
             value={searchTerm}
             onChange={(e) => onSearch(e.target.value)}

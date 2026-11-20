@@ -21,6 +21,7 @@
 
 	--color-background: var(--background);
 	--color-on-background: var(--on-background);
+	--color-foreground: var(--on-surface);
 
 	--color-surface: var(--surface);
 	--color-on-surface: var(--on-surface);
@@ -40,12 +41,23 @@
 	--color-inverse-on-surface: var(--inverse-on-surface);
 	--color-inverse-primary: var(--inverse-primary);
 
+	/* Semantic compatibility aliases mapped to 18 Studio tokens */
+	--color-card: var(--surface-container-lowest);
+	--color-card-foreground: var(--on-surface);
+	--color-border: var(--outline-variant);
+	--color-input: var(--outline-variant);
+	--color-muted: var(--surface-container);
+	--color-muted-foreground: var(--on-surface-variant);
+	--color-danger: var(--error);
+	--color-ring: var(--primary);
+
 	--font-headline: var(--font-headline);
 	--font-body: var(--font-body);
 	--font-label: var(--font-label);
 
-	--radius-lg: 0.25rem;
-	--radius-xl: 0.5rem;
-	--radius-full: 0.75rem;
+	/* Crisp architectural radius scale + true circular full radius */
+	--radius-md: 0.375rem;
+	--radius-lg: 0.5rem;
+	--radius-xl: 0.75rem;
+	--radius-full: 9999px;
 }
-

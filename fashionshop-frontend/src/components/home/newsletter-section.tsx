@@ -54,24 +54,30 @@ export function NewsletterSection() {
   };
 
   return (
-    <section className="bg-zinc-100 py-20 md:py-28">
+    <section className="border-t border-outline-variant/60 bg-surface-container-low py-20 md:py-28">
       <div className="mx-auto w-full max-w-3xl px-6 text-center md:px-8">
-        <h2 className="text-5xl font-black uppercase tracking-tight text-zinc-900 md:text-7xl">JOIN FASHIONSHOP</h2>
-        <p className="mx-auto mt-4 max-w-2xl text-xs uppercase tracking-[0.16em] text-zinc-500 md:text-sm">
+        <h2 className="font-headline text-4xl font-black uppercase tracking-tight text-primary md:text-6xl">
+          JOIN FASHIONSHOP
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl font-label text-xs font-medium uppercase tracking-[0.18em] text-on-surface-variant md:text-sm">
           Receive exclusive access to private launches and editorial insights.
         </p>
 
         {status === 'success' ? (
           <div
             data-testid="newsletter-success"
-            className="mx-auto mt-9 max-w-2xl border border-zinc-900 bg-white p-6 text-center text-zinc-900 md:p-8"
+            className="mx-auto mt-9 max-w-2xl rounded-xl border border-primary bg-surface-container-lowest p-6 text-center text-on-surface md:p-8"
           >
-            <p className="text-sm font-bold uppercase tracking-[0.18em]">WELCOME TO THE CIRCLE</p>
-            <p className="mt-2 text-xs uppercase tracking-[0.14em] text-zinc-600">{feedbackMessage}</p>
+            <p className="font-headline text-sm font-bold uppercase tracking-[0.18em] text-primary">
+              WELCOME TO THE CIRCLE
+            </p>
+            <p className="mt-2 text-xs uppercase tracking-[0.14em] text-on-surface-variant">
+              {feedbackMessage}
+            </p>
             <button
               type="button"
               onClick={handleReset}
-              className="mt-6 inline-flex h-10 items-center justify-center border border-zinc-900 bg-zinc-900 px-6 text-[0.65rem] font-semibold tracking-[0.2em] text-white transition hover:bg-zinc-800"
+              className="mt-6 inline-flex h-10 cursor-pointer items-center justify-center rounded-md bg-primary px-6 font-label text-[11px] font-bold uppercase tracking-[0.18em] text-on-primary transition hover:bg-primary-container"
             >
               SUBSCRIBE ANOTHER EMAIL
             </button>
@@ -97,12 +103,12 @@ export function NewsletterSection() {
                 if (status !== 'idle') setStatus('idle');
               }}
               placeholder="ENTER YOUR EMAIL"
-              className="h-12 flex-1 border border-zinc-300 bg-transparent px-4 text-xs tracking-[0.14em] text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none disabled:opacity-50"
+              className="h-12 flex-1 rounded-md border border-outline-variant bg-surface-container-lowest px-4 text-xs tracking-[0.14em] text-on-surface placeholder:text-outline/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={mutation.isPending}
-              className="inline-flex h-12 items-center justify-center border border-zinc-900 bg-zinc-900 px-8 text-[0.68rem] font-semibold tracking-[0.2em] text-white transition hover:bg-zinc-800 disabled:opacity-50"
+              className="inline-flex h-12 cursor-pointer items-center justify-center rounded-md bg-primary px-8 font-label text-xs font-bold uppercase tracking-[0.2em] text-on-primary transition hover:bg-primary-container disabled:opacity-50"
             >
               {mutation.isPending ? 'SUBSCRIBING...' : 'SUBSCRIBE'}
             </button>
@@ -121,7 +127,7 @@ export function NewsletterSection() {
         {status === 'error' && (
           <p
             data-testid="newsletter-error"
-            className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-red-600"
+            className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-error"
           >
             {feedbackMessage}
           </p>

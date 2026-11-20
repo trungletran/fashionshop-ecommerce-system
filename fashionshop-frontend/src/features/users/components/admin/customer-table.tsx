@@ -1,8 +1,8 @@
 'use client';
 
-import Image from "next/image";
-import { cn } from "@/lib/utils/cn";
-import type { CustomerAccount } from "@/types/user";
+import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
+import type { CustomerAccount } from '@/types/user';
 
 type Props = {
   customers: CustomerAccount[];
@@ -14,106 +14,100 @@ type Props = {
 export function CustomerTable({ customers, onDelete, onActivate, isLoading }: Props) {
   if (isLoading) {
     return (
-      <div className="animate-pulse space-y-4 p-8">
+      <div className="animate-pulse space-y-4 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-8">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-16 bg-neutral-100 rounded-md" />
+          <div key={i} className="h-14 rounded-md bg-surface-container" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="bg-surface-container-lowest overflow-hidden rounded-md border border-neutral-100 shadow-sm">
-      <table className="w-full text-left border-collapse">
-        <thead className="bg-surface-container-low border-b border-neutral-200">
+    <div className="overflow-x-auto rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-xs">
+      <table className="w-full border-collapse text-left">
+        <thead className="border-b border-outline-variant/60 bg-surface-container-low">
           <tr>
-            <th className="px-6 py-4 text-[10px] tracking-widest uppercase font-bold text-neutral-500 font-label">
+            <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
               Customer
             </th>
-            <th className="px-6 py-4 text-[10px] tracking-widest uppercase font-bold text-neutral-500 font-label">
+            <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
               Contact
             </th>
-            <th className="px-6 py-4 text-[10px] tracking-widest uppercase font-bold text-neutral-500 font-label">
+            <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
               Total Orders
             </th>
-            <th className="px-6 py-4 text-[10px] tracking-widest uppercase font-bold text-neutral-500 font-label">
+            <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
               Total Spend
             </th>
-            <th className="px-6 py-4 text-[10px] tracking-widest uppercase font-bold text-neutral-500 font-label">
+            <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
               Status
             </th>
-            <th className="px-6 py-4 text-[10px] tracking-widest uppercase font-bold text-neutral-500 font-label text-right">
+            <th className="px-6 py-4 text-right font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-neutral-100 font-body">
+        <tbody className="divide-y divide-outline-variant/40 font-body">
           {customers.map((customer) => (
             <tr
               key={customer.id}
-              className="hover:bg-neutral-50/50 transition-colors group"
+              className="transition-colors hover:bg-surface-container-low/60"
             >
-              <td className="px-6 py-5">
-                <div className="flex items-center gap-4">
-                  <div className="relative w-10 h-10 overflow-hidden rounded-md border border-neutral-100">
+              <td className="px-6 py-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-outline-variant/60 bg-surface-container">
                     {customer.avatarUrl ? (
                       <Image
                         src={customer.avatarUrl}
                         alt={customer.fullName}
                         fill
-                        className="object-cover transition-all duration-300"
+                        sizes="40px"
+                        className="object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-neutral-400">
-                        <span className="material-symbols-outlined text-xl">person</span>
+                      <div className="flex h-full w-full items-center justify-center text-on-surface-variant">
+                        <span className="material-symbols-outlined text-lg">person</span>
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-semibold text-black lowercase first-letter:uppercase">
+                    <span className="text-sm font-semibold text-primary">
                       {customer.fullName}
                     </span>
-                    <span className="text-[10px] text-neutral-400 uppercase tracking-tighter">
-                      ID: #{customer.id}  
+                    <span className="font-label text-[10px] uppercase tracking-wider text-outline">
+                      ID: #{customer.id}
                     </span>
                   </div>
                 </div>
               </td>
-              <td className="px-6 py-5">
-                <span className="text-sm text-neutral-600">{customer.email}</span>
+              <td className="px-6 py-4">
+                <span className="text-sm text-on-surface-variant">{customer.email}</span>
               </td>
-              <td className="px-6 py-5">
-                <span className="text-sm font-medium">{customer.totalOrders || 0}</span>
+              <td className="px-6 py-4">
+                <span className="text-sm font-medium text-on-surface">{customer.totalOrders || 0}</span>
               </td>
-              <td className="px-6 py-5 text-sm font-headline font-bold">
+              <td className="px-6 py-4 font-headline text-sm font-bold text-primary">
                 ${Number(customer.totalSpend || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </td>
-              <td className="px-6 py-5">
-                <span className={cn(
-                  "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase",
-                  customer.isActive !== false
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                )}>
+              <td className="px-6 py-4">
+                <Badge variant={customer.isActive !== false ? 'success' : 'error'}>
                   {customer.isActive !== false ? 'Active' : 'Inactive'}
-                </span>
+                </Badge>
               </td>
-              <td className="px-6 py-5 text-right space-x-4">
-                {customer.isActive !== false ? (
-                  <button className="text-[10px] tracking-widest uppercase font-bold text-neutral-400 hover:text-black transition-all">
-                  </button>
-
-                ) : (
+              <td className="space-x-4 px-6 py-4 text-right">
+                {customer.isActive === false ? (
                   <button
+                    type="button"
                     onClick={() => onActivate?.(customer.id)}
-                    className="text-[10px] tracking-widest uppercase font-bold text-green-600 border-b-2 border-transparent hover:border-green-600 transition-all"
+                    className="cursor-pointer font-label text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-700 underline-offset-4 hover:underline"
                   >
                     Activate
                   </button>
-                )}
+                ) : null}
                 <button
+                  type="button"
                   onClick={() => onDelete(customer.id)}
-                  className="text-[10px] tracking-widest uppercase font-bold text-error border-b-2 border-transparent hover:border-error transition-all"
+                  className="cursor-pointer font-label text-[10px] font-bold uppercase tracking-[0.16em] text-error underline-offset-4 hover:underline"
                 >
                   Delete
                 </button>

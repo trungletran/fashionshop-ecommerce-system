@@ -56,10 +56,10 @@ export default function CheckoutPage() {
 
           {/* Right Column — Order Summary Sidebar */}
           <div className="h-fit lg:sticky lg:top-24">
-            <div className="rounded-xl bg-surface-container-lowest p-8 shadow-sm ring-1 ring-outline-variant">
-              <h2 className="font-headline mb-6 text-lg font-black tracking-tight">Order Summary</h2>
+            <div className="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs sm:p-8">
+              <h2 className="font-headline mb-6 text-lg font-black uppercase tracking-tight text-primary">Order Summary</h2>
 
-              <div className="space-y-5 border-b border-outline-variant pb-6">
+              <div className="space-y-5 border-b border-outline-variant/60 pb-6">
                 {summary.items.map((item) => (
                   <div key={item.productId} className="flex items-center gap-4">
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-surface-container">
@@ -72,10 +72,10 @@ export default function CheckoutPage() {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold">{item.name}</p>
+                      <p className="truncate text-sm font-bold text-primary">{item.name}</p>
                       <p className="mt-0.5 text-xs text-on-surface-variant">Qty: {item.quantity}</p>
                     </div>
-                    <p className="flex-shrink-0 text-sm font-bold">${item.total.toFixed(2)}</p>
+                    <p className="flex-shrink-0 text-sm font-bold text-primary">${item.total.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -95,8 +95,8 @@ export default function CheckoutPage() {
                     <span className="font-medium text-secondary">-${summary.discountAmount.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="mt-4 flex justify-between border-t border-outline-variant pt-4">
-                  <span className="font-headline text-base font-black">Total</span>
+                <div className="mt-4 flex justify-between border-t border-outline-variant/60 pt-4">
+                  <span className="font-headline text-base font-black uppercase">Total</span>
                   <span className="font-headline text-base font-black">${summary.finalTotal.toFixed(2)}</span>
                 </div>
               </div>
@@ -104,9 +104,10 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 form="checkout-form"
-                className="mt-6 h-14 w-full rounded-lg bg-primary text-sm font-bold tracking-wide text-on-primary transition-colors hover:opacity-90 active:opacity-80"
+                disabled={createOrderMutation.isPending}
+                className="mt-6 h-12 w-full cursor-pointer rounded-md bg-primary font-label text-xs font-bold uppercase tracking-[0.2em] text-on-primary transition-all hover:bg-primary-container active:scale-[0.99] disabled:opacity-50"
               >
-                Place Order
+                {createOrderMutation.isPending ? 'Placing Order…' : 'Place Order'}
               </button>
 
               <p className="mt-4 text-center text-[11px] leading-relaxed text-on-surface-variant">

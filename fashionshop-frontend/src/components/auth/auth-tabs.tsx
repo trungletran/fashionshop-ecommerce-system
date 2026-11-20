@@ -14,7 +14,7 @@ const tabs: Array<{ id: AuthTab; label: string }> = [
 
 export function AuthTabs({ activeTab, onChange }: AuthTabsProps) {
   return (
-    <div className="border-b border-zinc-200">
+    <div className="border-b border-outline-variant/60">
       <div className="flex gap-8">
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;
@@ -25,15 +25,15 @@ export function AuthTabs({ activeTab, onChange }: AuthTabsProps) {
               type="button"
               onClick={() => onChange(tab.id)}
               className={cn(
-                'relative pb-4 text-[0.82rem] font-semibold uppercase tracking-[0.22em] transition-colors',
-                isActive ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-700',
+                'relative cursor-pointer pb-3.5 font-label text-xs font-bold uppercase tracking-[0.2em] transition-colors',
+                isActive ? 'text-primary' : 'text-on-surface-variant hover:text-primary',
               )}
               aria-pressed={isActive}
             >
               {tab.label}
               <span
                 className={cn(
-                  'absolute inset-x-0 -bottom-px h-0.5 bg-zinc-900 transition-transform duration-200',
+                  'absolute inset-x-0 -bottom-px h-0.5 bg-primary transition-transform duration-200',
                   isActive ? 'scale-x-100' : 'scale-x-0',
                 )}
               />

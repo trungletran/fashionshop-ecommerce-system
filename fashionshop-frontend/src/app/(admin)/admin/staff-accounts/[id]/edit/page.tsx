@@ -12,43 +12,42 @@ export default function EditStaffPage({ params }: { params: Promise<{ id: string
   const { data: staffList, isLoading } = useAdminStaffAccountsQuery();
 
   if (isLoading) {
-    return (
-      <div className="max-w-6xl mx-auto py-20 flex justify-center">
-        <LoadingState label="Loading account details..." />
-      </div>
-    );
+    return <LoadingState label="Loading account details" />;
   }
 
   const staff = staffList?.find((s) => s.id === id);
 
   if (!staff) {
     return (
-      <div className="max-w-6xl mx-auto py-20">
-        <EmptyState 
-          title="Staff Account Not Found" 
-          description="The account you are trying to edit does not exist."
-          actionLabel="Back to Staff"
-          actionHref="/admin/staff-accounts"
-        />
-      </div>
+      <EmptyState
+        title="Staff Account Not Found"
+        description="The account you are trying to edit does not exist."
+        actionLabel="Back to Staff"
+        actionHref="/admin/staff-accounts"
+      />
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-12">
-      {/* Header */}
-      <header className="flex justify-between items-center w-full mb-12">
-        <div>
-          <nav className="flex items-center gap-2 text-[10px] text-neutral-400 uppercase tracking-widest mb-4 font-bold">
-            <Link href="/admin/staff-accounts" className="hover:text-black transition-colors">Staff Accounts</Link>
-            <span className="material-symbols-outlined text-[10px]">chevron_right</span>
-            <Link href={`/admin/staff-accounts/${id}`} className="hover:text-black transition-colors">{staff.fullName}</Link>
-            <span className="material-symbols-outlined text-[10px]">chevron_right</span>
-            <span className="text-black uppercase">Edit Profile</span>
-          </nav>
-          <h2 className="text-3xl font-extrabold tracking-tighter text-black font-headline">Edit Staff Profile</h2>
-          <p className="text-sm text-neutral-500 font-body">Modify administrative access and personal information for this account.</p>
-        </div>
+    <div className="mx-auto max-w-6xl space-y-8">
+      <header className="border-b border-outline-variant/60 pb-6">
+        <nav className="mb-3 flex items-center gap-2 font-label text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant">
+          <Link href="/admin/staff-accounts" className="transition-colors hover:text-primary">
+            Staff Accounts
+          </Link>
+          <span className="material-symbols-outlined text-xs">chevron_right</span>
+          <Link href={`/admin/staff-accounts/${id}`} className="transition-colors hover:text-primary">
+            {staff.fullName}
+          </Link>
+          <span className="material-symbols-outlined text-xs">chevron_right</span>
+          <span className="text-primary">Edit Profile</span>
+        </nav>
+        <h1 className="font-headline text-3xl font-black uppercase tracking-tight text-primary sm:text-4xl">
+          Edit Staff Profile
+        </h1>
+        <p className="mt-2 text-sm text-on-surface-variant">
+          Modify administrative access and personal information for this account.
+        </p>
       </header>
 
       <StaffForm initialData={staff} />

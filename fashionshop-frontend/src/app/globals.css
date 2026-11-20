@@ -38,8 +38,8 @@ a {
   :root {
     /* 18 Studio Palette */
     --primary: #000000;
-    --on-primary: #e2e2e2;
-    --primary-container: #3b3b3b;
+    --on-primary: #ffffff;
+    --primary-container: #262626;
     --on-primary-container: #ffffff;
     
     --secondary: #5e604d;
@@ -63,7 +63,7 @@ a {
     --surface: #f9f9f9;
     --on-surface: #1a1c1c;
     --surface-variant: #e2e2e2;
-    --on-surface-variant: #474747;
+    --on-surface-variant: #525252;
     
     --surface-container-lowest: #ffffff;
     --surface-container-low: #f3f3f4;
@@ -71,12 +71,12 @@ a {
     --surface-container-high: #e8e8e8;
     --surface-container-highest: #e2e2e2;
     
-    --outline: #777777;
-    --outline-variant: #c6c6c6;
+    --outline: #737373;
+    --outline-variant: #d4d4d4;
     
-    --inverse-surface: #2f3131;
-    --inverse-on-surface: #f0f1f1;
-    --inverse-primary: #c6c6c6;
+    --inverse-surface: #1a1c1c;
+    --inverse-on-surface: #f5f5f5;
+    --inverse-primary: #d4d4d4;
 
     --font-headline: 'Epilogue', sans-serif;
     --font-body: 'Inter', sans-serif;

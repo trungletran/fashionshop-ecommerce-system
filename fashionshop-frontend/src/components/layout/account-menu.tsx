@@ -56,7 +56,7 @@ export function AccountMenu({ isLoggedIn, avatarUrl, fullName, onLogout }: Accou
       <Link
         href="/auth"
         aria-label="Open account"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full text-on-surface/80 transition-colors hover:bg-surface-container hover:text-primary"
       >
         <UserRound className="h-4 w-4" />
       </Link>
@@ -71,7 +71,7 @@ export function AccountMenu({ isLoggedIn, avatarUrl, fullName, onLogout }: Accou
         aria-expanded={isOpen}
         aria-haspopup="menu"
         onClick={() => setIsOpen((current) => !current)}
-        className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+        className="relative inline-flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full text-on-surface/80 transition-colors hover:bg-surface-container hover:text-primary"
       >
         {showAvatar && avatarUrl ? (
           <Image
@@ -89,7 +89,7 @@ export function AccountMenu({ isLoggedIn, avatarUrl, fullName, onLogout }: Accou
 
       {isOpen ? (
         <div
-          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 min-w-[160px] border border-zinc-200 bg-white p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.12)]"
+          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 min-w-[180px] rounded-lg border border-outline-variant/70 bg-surface-container-lowest p-1.5 shadow-xl"
           role="menu"
           data-testid="customer-menu"
         >
@@ -100,11 +100,13 @@ export function AccountMenu({ isLoggedIn, avatarUrl, fullName, onLogout }: Accou
               role="menuitem"
               data-testid={item.testId}
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900"
+              className="block rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
             >
               {item.label}
             </Link>
           ))}
+
+          <div className="my-1 border-t border-outline-variant/50" />
 
           <button
             type="button"
@@ -114,7 +116,7 @@ export function AccountMenu({ isLoggedIn, avatarUrl, fullName, onLogout }: Accou
               setIsOpen(false);
               onLogout();
             }}
-            className="block w-full px-3 py-2 text-left text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900"
+            className="block w-full cursor-pointer rounded-md px-3 py-2 text-left text-xs font-semibold uppercase tracking-[0.14em] text-error transition-colors hover:bg-error-container/40"
           >
             Logout
           </button>

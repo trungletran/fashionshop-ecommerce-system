@@ -9,6 +9,8 @@ import { LoadingState } from '@/components/common/loading-state';
 import { EmptyState } from '@/components/common/empty-state';
 import * as Dialog from '@radix-ui/react-dialog';
 import { DialogClose, DialogContent, DialogRoot } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils/cn';
 
@@ -324,19 +326,20 @@ export default function AdminOrderDetailsPage({ params }: { params: Promise<{ id
           </section>
 
           {/* Help/Notes */}
-          <div className="p-5 border border-dashed border-neutral-300 rounded-xl bg-surface-container-lowest">
-            <p className="text-[10px] text-neutral-500 text-center uppercase tracking-widest font-bold">Internal Order Notes</p>
-            <textarea
-              className="w-full mt-4 bg-transparent border-none text-xs focus:ring-0 italic placeholder:text-neutral-400 h-24 resize-none"
+          <div className="space-y-3 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 shadow-xs">
+            <Label htmlFor="admin-order-internal-notes">Internal Order Notes</Label>
+            <Textarea
+              id="admin-order-internal-notes"
+              className="min-h-24 text-xs"
               placeholder="Add a private note for the order management team..."
               defaultValue={order.note || ''}
-            ></textarea>
+            />
           </div>
         </div>
       </div>
 
       <DialogRoot open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-        <DialogContent className="w-[min(92vw,720px)] overflow-hidden rounded-[2rem] border border-neutral-200 bg-white p-0">
+        <DialogContent className="w-[min(92vw,720px)] overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-0">
           <Dialog.Title className="sr-only">
             Customer profile for {order.customerName || 'selected customer'}
           </Dialog.Title>

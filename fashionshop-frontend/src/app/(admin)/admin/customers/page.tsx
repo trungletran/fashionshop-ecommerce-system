@@ -1,18 +1,21 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useAdminCustomerAccountsQuery, useDeleteAdminUserMutation } from '@/features/users/hooks';
-//import { LoadingState } from '@/components/common/loading-state';
+import {
+  useAdminCustomerAccountsQuery,
+  useDeleteAdminUserMutation,
+  useActivateAdminUserMutation,
+} from '@/features/users/hooks';
 import { EmptyState } from '@/components/common/empty-state';
 import { ConfirmDialog } from '@/components/common/confirm-dialog';
+import { PageHeader } from '@/components/common/page-header';
 import { Pagination } from '@/components/common/pagnition';
+import { Input } from '@/components/ui/input';
 import { CustomerStats } from '@/features/users/components/admin/customer-stats';
 import { CustomerTable } from '@/features/users/components/admin/customer-table';
-//import { CustomerInsights } from '@/features/users/components/admin/customer-insights';
 import { toast } from 'sonner';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils/cn';
-import { useActivateAdminUserMutation } from '@/features/users/hooks';
 
 export default function AdminCustomersPage() {
   const { data: customers = [], isLoading } = useAdminCustomerAccountsQuery();
@@ -41,7 +44,7 @@ export default function AdminCustomersPage() {
       },
       onError: () => {
         toast.error('Failed to restore customer account');
-      }
+      },
     });
   };
 
@@ -74,11 +77,11 @@ export default function AdminCustomersPage() {
   const stats = useMemo(() => {
     const totalSpend = customers.reduce((acc, c) => acc + (c.totalSpend || 0), 0);
     const avgSpend = customers.length > 0 ? totalSpend / customers.length : 0;
-    
+
     return {
-      totalActive: customers.filter(c => c.isActive !== false).length,
+      totalActive: customers.filter((c) => c.isActive !== false).length,
       avgSpend,
-      newRegistrations: customers.length, // Or keep as is if there's a better metric
+      newRegistrations: customers.length,
     };
   }, [customers]);
 
@@ -91,23 +94,17 @@ export default function AdminCustomersPage() {
       },
       onError: () => {
         toast.error('Failed to delete customer account');
-      }
+      },
     });
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-8">
-      {/* Page Header */}
-      <div className="flex justify-between items-end mb-12">
-        <div>
-          <h2 className="text-4xl font-extrabold tracking-tighter font-headline mb-2 uppercase">
-            Customers
-          </h2>
-          <p className="text-neutral-500 text-sm font-body">
-            Manage your studio&apos;s client base and order history.
-          </p>
-        </div>
-      </div>
+    <div className="mx-auto max-w-7xl space-y-8">
+      <PageHeader
+        eyebrow="Directory"
+        title="Customers"
+        description="Manage your studio's client base and account status."
+      />
 
       <CustomerStats
         totalActive={stats.totalActive}
@@ -115,54 +112,35 @@ export default function AdminCustomersPage() {
         newRegistrations={stats.newRegistrations}
       />
 
-      {/* Filters & Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] tracking-widest uppercase font-bold text-neutral-400 mr-2 font-label">
-            Filter by:
+      <div className="grid grid-cols-12 items-center gap-4">
+        <div className="col-span-12 flex flex-wrap items-center gap-2 lg:col-span-8">
+          <span className="mr-1 font-label text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+            Filter:
           </span>
-          <button
-            onClick={() => handleStatusFilterChange('all')}
-            className={cn(
-              "px-4 py-1.5 text-xs font-semibold rounded-full transition-all",
-              statusFilter === 'all'
-                ? "bg-primary text-on-primary"
-                : "bg-surface-container-highest text-on-surface hover:bg-neutral-300"
-            )}
-          >
-            All
-          </button>
-          <button
-            onClick={() => handleStatusFilterChange('active')}
-            className={cn(
-              "px-4 py-1.5 text-xs font-semibold rounded-full transition-all",
-              statusFilter === 'active'
-                ? "bg-primary text-on-primary"
-                : "bg-surface-container-highest text-on-surface hover:bg-neutral-300"
-            )}
-          >
-            Active
-          </button>
-          <button
-            onClick={() => handleStatusFilterChange('inactive')}
-            className={cn(
-              "px-4 py-1.5 text-xs font-semibold rounded-full transition-all",
-              statusFilter === 'inactive'
-                ? "bg-primary text-on-primary"
-                : "bg-surface-container-highest text-on-surface hover:bg-neutral-300"
-            )}
-          >
-            Inactive
-          </button>
+          {(['all', 'active', 'inactive'] as const).map((status) => (
+            <button
+              key={status}
+              type="button"
+              onClick={() => handleStatusFilterChange(status)}
+              className={cn(
+                'cursor-pointer rounded-full px-4 py-2 font-label text-[11px] font-bold uppercase tracking-[0.16em] transition-colors',
+                statusFilter === status
+                  ? 'bg-primary text-on-primary'
+                  : 'border border-outline-variant/60 bg-surface-container-lowest text-on-surface-variant hover:border-primary hover:text-primary',
+              )}
+            >
+              {status}
+            </button>
+          ))}
         </div>
 
-        <div className="flex items-center gap-3 flex-1 max-w-md">
-          <div className="relative w-full group">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-lg">
+        <div className="col-span-12 lg:col-span-4">
+          <div className="relative w-full">
+            <span className="material-symbols-outlined pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-lg text-outline">
               search
             </span>
-            <input
-              className="w-full bg-surface-container-lowest border border-neutral-100 rounded-md pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-black transition-all placeholder:text-neutral-400 font-body"
+            <Input
+              className="pl-10"
               placeholder="Search customers by name or email..."
               type="text"
               value={searchTerm}
@@ -175,7 +153,6 @@ export default function AdminCustomersPage() {
         </div>
       </div>
 
-      {/* Table & Pagination Container */}
       <div className="space-y-4">
         {totalItems === 0 && !isLoading ? (
           <EmptyState
@@ -188,14 +165,13 @@ export default function AdminCustomersPage() {
             }}
           />
         ) : (
-          <>
+          <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-xs">
             <CustomerTable
               customers={paginatedCustomers}
               onDelete={setDeleteId}
               onActivate={handleActivate}
               isLoading={isLoading}
             />
-
             <Pagination
               page={page}
               totalPages={totalPages}
@@ -203,11 +179,9 @@ export default function AdminCustomersPage() {
               totalItems={totalItems}
               onPageChange={setPage}
             />
-          </>
+          </div>
         )}
       </div>
-
-      {/* <CustomerInsights /> */}
 
       <ConfirmDialog
         open={Boolean(deleteId)}

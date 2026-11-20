@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 type PageHeaderProps = {
+  eyebrow?: string;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -8,14 +10,25 @@ type PageHeaderProps = {
   action?: React.ReactNode;
 };
 
-export function PageHeader({ title, description, actionLabel, actionHref, action }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, description, actionLabel, actionHref, action }: PageHeaderProps) {
   return (
-    <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-border bg-card px-5 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-        {description ? <p className="mt-1 text-sm text-muted-foreground">{description}</p> : null}
+    <header className="mb-10 flex flex-col gap-4 border-b border-outline-variant/60 pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="space-y-2">
+        {eyebrow ? (
+          <p className="font-label text-[10px] font-bold uppercase tracking-[0.26em] text-on-surface-variant">
+            {eyebrow}
+          </p>
+        ) : null}
+        <h1 className="font-headline text-3xl font-black uppercase tracking-tight text-primary sm:text-4xl">
+          {title}
+        </h1>
+        {description ? <p className="max-w-2xl text-sm text-on-surface-variant">{description}</p> : null}
       </div>
-      {action ?? (actionHref && actionLabel ? <Link href={actionHref} className="rounded-2xl bg-brand-600 px-4 py-2.5 text-sm font-medium text-white">{actionLabel}</Link> : null)}
-    </div>
+      {action ?? (actionHref && actionLabel ? (
+        <Button asChild>
+          <Link href={actionHref}>{actionLabel}</Link>
+        </Button>
+      ) : null)}
+    </header>
   );
 }

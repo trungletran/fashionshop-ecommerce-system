@@ -14,7 +14,6 @@ const navigationByRole = {
     { href: '/staff/orders', label: 'Orders', icon: 'shopping_bag' },
   ],
   ADMIN: [
-    //{ href: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
     { href: '/admin/products', label: 'Products', icon: 'inventory_2' },
     { href: '/admin/categories', label: 'Categories', icon: 'warehouse' },
     { href: '/admin/orders', label: 'Orders', icon: 'shopping_bag' },
@@ -29,18 +28,32 @@ export function RoleShell({ role, children }: { role: 'STAFF' | 'ADMIN'; childre
   const session = useAuthSession();
   const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
   const avatarUrl = session.user?.avatarUrl && session.user.avatarUrl !== failedAvatarUrl ? session.user.avatarUrl : null;
+  const initials =
+    session.user?.fullName
+      ?.split(' ')
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || (role === 'ADMIN' ? 'AD' : 'ST');
 
   return (
     <div className="min-h-screen bg-surface font-body text-on-surface">
       <div className="flex min-h-screen">
         {/* SIDE NAV BAR */}
-        <aside className="fixed left-0 top-0 h-screen w-64 border-r border-outline-variant bg-surface-container-low flex flex-col py-8 font-headline tracking-tighter text-sm z-50">
-          <div className="px-6 mb-12">
-            <h1 className="text-xl font-bold tracking-widest text-primary uppercase">18 Studio</h1>
-            <p className="text-[10px] tracking-[0.2em] opacity-50 uppercase mt-1">Shop Console</p>
+        <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-outline-variant/60 bg-surface-container-lowest py-8">
+          <div className="mb-10 px-6">
+            <Link href="/" className="block">
+              <h1 className="font-headline text-xl font-black uppercase tracking-[0.22em] text-primary">
+                18 Studio
+              </h1>
+              <p className="mt-1 font-label text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
+                {role === 'ADMIN' ? 'Admin Console' : 'Staff Console'}
+              </p>
+            </Link>
           </div>
-          
-          <nav className="flex-1 space-y-1">
+
+          <nav className="flex-1 space-y-1 px-3" aria-label={`${role} navigation`}>
             {navigationByRole[role].map((item) => {
               const active = pathname.startsWith(item.href);
               return (
@@ -48,13 +61,16 @@ export function RoleShell({ role, children }: { role: 'STAFF' | 'ADMIN'; childre
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-6 py-3 transition-colors duration-200 scale-98 active:opacity-80',
-                    active 
-                      ? 'text-primary font-bold border-r-2 border-primary bg-surface-variant' 
-                      : 'text-on-surface-variant hover:text-primary hover:bg-surface-container'
+                    'flex items-center gap-3 rounded-md px-3.5 py-2.5 font-label text-xs font-bold uppercase tracking-[0.16em] transition-colors',
+                    active
+                      ? 'bg-primary text-on-primary'
+                      : 'text-on-surface-variant hover:bg-surface-container hover:text-primary',
                   )}
                 >
-                  <span className={cn("material-symbols-outlined", active && "fill-current")} style={{ fontVariationSettings: active ? "'FILL' 1" : undefined }}>
+                  <span
+                    className="material-symbols-outlined text-[20px]"
+                    style={{ fontVariationSettings: active ? "'FILL' 1" : undefined }}
+                  >
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
@@ -63,41 +79,45 @@ export function RoleShell({ role, children }: { role: 'STAFF' | 'ADMIN'; childre
             })}
           </nav>
 
-          <div className="px-6 mt-auto">
-            <div className="flex items-center gap-3 p-3 bg-surface-container rounded-lg mb-4">
-              <div className="relative w-8 h-8 flex-shrink-0 overflow-hidden rounded-full bg-primary-container flex items-center justify-center text-[10px] text-white font-bold">
+          <div className="mt-auto border-t border-outline-variant/60 px-4 pt-5">
+            <div className="mb-3 flex items-center gap-3 rounded-lg border border-outline-variant/50 bg-surface-container-low p-3">
+              <div className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-[11px] font-bold text-on-primary">
                 {avatarUrl ? (
                   <Image
                     src={avatarUrl}
                     alt={session.user?.fullName ?? 'User avatar'}
                     fill
-                    sizes="32px"
+                    sizes="36px"
                     className="object-cover"
                     onError={() => setFailedAvatarUrl(session.user?.avatarUrl ?? null)}
                   />
                 ) : (
-                  session.user?.fullName?.split(' ').map(n => n[0]).join('') ?? 'AD'
+                  initials
                 )}
               </div>
-              <div>
-                <p className="text-xs font-bold">{session.user?.fullName ?? 'Admin User'}</p>
-                <p className="text-[10px] opacity-60 uppercase">{role}</p>
+              <div className="min-w-0">
+                <p className="truncate text-xs font-bold text-primary">
+                  {session.user?.fullName ?? (role === 'ADMIN' ? 'Admin User' : 'Staff Member')}
+                </p>
+                <p className="font-label text-[10px] font-bold uppercase tracking-[0.16em] text-on-surface-variant">
+                  {role}
+                </p>
               </div>
             </div>
-            
+
             <button
               type="button"
-              className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-error hover:bg-error-container/20 transition-colors rounded-md"
+              className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 font-label text-[11px] font-bold uppercase tracking-[0.16em] text-error transition-colors hover:bg-error-container/40"
               onClick={() => clearSessionAndRedirect(router)}
             >
-              <span className="material-symbols-outlined text-sm">logout</span>
-              Log out
+              <span className="material-symbols-outlined text-base">logout</span>
+              <span>Log out</span>
             </button>
           </div>
         </aside>
 
-        <div className="flex min-h-screen flex-1 flex-col ml-64">
-          <main className="flex-1 mt-16 p-10 min-h-screen bg-surface">
+        <div className="ml-64 flex min-h-screen flex-1 flex-col">
+          <main className="min-h-screen flex-1 bg-surface px-6 py-8 lg:px-10 lg:py-10">
             {children}
           </main>
         </div>
@@ -105,4 +125,3 @@ export function RoleShell({ role, children }: { role: 'STAFF' | 'ADMIN'; childre
     </div>
   );
 }
-

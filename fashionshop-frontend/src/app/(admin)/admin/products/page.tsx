@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useState } from 'react';
+import Link from 'next/link';
 import {
   useManageProductsQuery,
   useDeleteManageProductMutation,
-} from "@/features/products/hooks";
-import { useDebounce } from "@/hooks/use-debounce";
-import { toast } from "sonner";
-import { ConfirmDialog } from "@/components/common/confirm-dialog";
-import { LoadingState } from "@/components/common/loading-state";
-import { EmptyState } from "@/components/common/empty-state";
-import { ProductTable } from "@/features/products/components/admin/product-table";
-import { ProductStats } from "@/features/products/components/product-stats";
-import { Pagination } from "@/components/common/pagnition";
-import { AdminProductsFilters } from "@/features/products/components/admin/admin-products-filters";
-import type { Product } from "@/types/product";
+} from '@/features/products/hooks';
+import { useDebounce } from '@/hooks/use-debounce';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/common/confirm-dialog';
+import { EmptyState } from '@/components/common/empty-state';
+import { PageHeader } from '@/components/common/page-header';
+import { Button } from '@/components/ui/button';
+import { ProductTable } from '@/features/products/components/admin/product-table';
+import { ProductStats } from '@/features/products/components/product-stats';
+import { Pagination } from '@/components/common/pagnition';
+import { AdminProductsFilters } from '@/features/products/components/admin/admin-products-filters';
+import type { Product } from '@/types/product';
 
 export default function AdminProductsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
@@ -57,37 +57,30 @@ export default function AdminProductsPage() {
     if (!deleteId) return;
     deleteMutation.mutate(deleteId, {
       onSuccess: () => {
-        toast.success("Product deleted successfully");
+        toast.success('Product deleted successfully');
         setDeleteId(null);
       },
       onError: () => {
-        toast.error("Failed to delete product");
+        toast.error('Failed to delete product');
       },
     });
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex justify-between items-end mb-12">
-        <div>
-          <h2 className="font-headline text-4xl font-extrabold tracking-tighter text-black uppercase">
-            Inventory
-          </h2>
-          <p className="text-sm text-neutral-500 mt-2 font-body">
-            Manage your editorial collection and product stock.
-          </p>
-        </div>
-        <div className="flex gap-4">
-          <Link
-            href="/admin/products/new"
-            className="flex items-center gap-2 px-8 py-3 bg-black text-white hover:bg-zinc-800 transition-all active:scale-95 rounded-md"
-          >
-            <span className="material-symbols-outlined text-lg text-white">add</span>
-            <span className="font-label text-xs tracking-widest uppercase font-bold text-white">Add Product</span>
-          </Link>
-        </div>
-      </div>
+    <div className="mx-auto max-w-7xl space-y-8">
+      <PageHeader
+        eyebrow="Catalog Management"
+        title="Inventory"
+        description="Manage your editorial collection and product stock."
+        action={
+          <Button asChild>
+            <Link href="/admin/products/new">
+              <span className="material-symbols-outlined text-base">add</span>
+              <span>Add Product</span>
+            </Link>
+          </Button>
+        }
+      />
 
       <ProductStats
         totalItems={totalItems}
@@ -103,16 +96,15 @@ export default function AdminProductsPage() {
         onSearch={handleSearch}
       />
 
-      {/* Main Data Table Container */}
-      <div className="bg-surface-container-lowest overflow-hidden rounded-xl border border-neutral-100">
+      <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-xs">
         <div className="overflow-x-auto">
           {products.length === 0 && !isLoading ? (
-            <div className="py-20">
+            <div className="p-6">
               <EmptyState
                 title="No products found"
                 description="Try adjusting your search or filters to find what you're looking for."
                 actionLabel="Reset Search"
-                onAction={() => setSearchTerm("")}
+                onAction={() => setSearchTerm('')}
               />
             </div>
           ) : (

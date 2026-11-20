@@ -109,19 +109,23 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#efefec] text-zinc-900 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(460px,520px)_minmax(0,1fr)]">
-      <aside className="relative hidden overflow-hidden bg-[linear-gradient(180deg,rgba(34,34,34,0.08),rgba(34,34,34,0.22))] lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.55),transparent_38%),linear-gradient(180deg,rgba(232,232,232,0.9),rgba(196,196,196,0.82))]" />
-        <div className="absolute inset-y-0 left-8 w-px bg-black/20" />
-        <div className="absolute bottom-8 left-14 h-24 w-24 rounded-full border border-black/15" />
-        <div className="absolute bottom-10 left-20 h-36 w-28 border border-black/10 bg-white/25 shadow-[0_0_120px_rgba(0,0,0,0.08)] backdrop-blur-sm" />
+    <main className="min-h-screen bg-surface font-body text-on-surface lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(460px,520px)_minmax(0,1fr)]">
+      <aside className="relative hidden overflow-hidden bg-surface-container-low lg:block">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.65),transparent_40%),linear-gradient(180deg,rgba(243,243,244,0.92),rgba(226,226,226,0.85))]" />
+        <div className="absolute inset-y-0 left-8 w-px bg-primary/15" />
+        <div className="absolute bottom-8 left-14 h-24 w-24 rounded-full border border-primary/15" />
+        <div className="absolute bottom-10 left-20 h-36 w-28 rounded-lg border border-primary/10 bg-surface-container-lowest/40 backdrop-blur-sm" />
       </aside>
 
-      <section className="flex items-center justify-center px-4 py-8 sm:px-8 lg:px-6 lg:py-10">
-        <div className="w-full max-w-[420px] bg-white px-6 py-8 shadow-[0_18px_60px_rgba(0,0,0,0.08)] ring-1 ring-black/5 sm:px-10 sm:py-10">
-          <div className="space-y-3 text-center">
-            <h1 className="text-[clamp(3rem,8vw,4.75rem)] font-black leading-none tracking-[-0.06em] text-zinc-950">ACCOUNT</h1>
-            <p className="text-[0.72rem] font-medium uppercase tracking-[0.34em] text-zinc-400">Access your account</p>
+      <section className="flex items-center justify-center px-4 py-10 sm:px-8 lg:px-6 lg:py-12">
+        <div className="w-full max-w-[440px] rounded-xl border border-outline-variant/60 bg-surface-container-lowest px-6 py-8 shadow-sm sm:px-10 sm:py-10">
+          <div className="space-y-2.5 text-center">
+            <h1 className="font-headline text-[clamp(2.75rem,7vw,4.25rem)] font-black leading-none tracking-[-0.06em] text-primary">
+              ACCOUNT
+            </h1>
+            <p className="font-label text-[10px] font-bold uppercase tracking-[0.3em] text-on-surface-variant">
+              Access your account
+            </p>
           </div>
 
           <div className="mt-8">
@@ -133,6 +137,7 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
               <LoginForm
                 values={loginValues}
                 errors={loginErrors}
+                isSubmitting={loginMutation.isPending}
                 onChange={(field, value) => setLoginValues((current) => ({ ...current, [field]: value }))}
                 onSubmit={submitLogin}
               />
@@ -140,19 +145,24 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
               <RegisterForm
                 values={registerValues}
                 errors={registerErrors}
+                isSubmitting={registerMutation.isPending}
                 onChange={(field, value) => setRegisterValues((current) => ({ ...current, [field]: value }))}
                 onSubmit={submitRegister}
               />
             )}
           </div>
 
-          {statusMessage ? <p className="mt-5 text-center text-xs font-medium uppercase tracking-[0.22em] text-zinc-500">{statusMessage}</p> : null}
+          {statusMessage ? (
+            <p className="mt-5 text-center font-label text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+              {statusMessage}
+            </p>
+          ) : null}
         </div>
       </section>
 
-      <aside className="relative hidden overflow-hidden bg-[linear-gradient(180deg,rgba(24,24,24,0.98),rgba(60,60,60,0.86))] lg:block">
+      <aside className="relative hidden overflow-hidden bg-primary lg:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_30%,rgba(255,255,255,0.14),transparent_35%),radial-gradient(circle_at_50%_65%,rgba(255,255,255,0.06),transparent_28%)]" />
-        <div className="absolute inset-x-14 top-10 h-80 rounded-[50%] border border-white/6 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.01))] blur-[0.5px]" />
+        <div className="absolute inset-x-14 top-10 h-80 rounded-[50%] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.01))]" />
         <div className="absolute inset-x-20 bottom-20 h-40 rounded-[48%] border border-white/5 bg-black/25" />
       </aside>
     </main>

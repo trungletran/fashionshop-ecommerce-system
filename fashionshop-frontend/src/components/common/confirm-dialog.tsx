@@ -1,7 +1,7 @@
 'use client';
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { cn } from '@/lib/utils/cn';
+import { Button } from '@/components/ui/button';
 
 type ConfirmDialogProps = {
   open: boolean;
@@ -28,21 +28,29 @@ export function ConfirmDialog({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[min(92vw,480px)] -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-border bg-card p-6 shadow-2xl outline-none">
-          <Dialog.Title className="text-lg font-semibold">{title}</Dialog.Title>
-          {description ? <Dialog.Description className="mt-2 text-sm text-muted-foreground">{description}</Dialog.Description> : null}
-          <div className="mt-6 flex justify-end gap-3">
-            <Dialog.Close className="rounded-2xl border border-border px-4 py-2 text-sm">{cancelLabel}</Dialog.Close>
-            <button
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[min(92vw,460px)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 text-on-surface shadow-2xl outline-none sm:p-8">
+          <Dialog.Title className="font-headline text-lg font-extrabold tracking-tight text-primary">
+            {title}
+          </Dialog.Title>
+          {description ? (
+            <Dialog.Description className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+              {description}
+            </Dialog.Description>
+          ) : null}
+          <div className="mt-7 flex items-center justify-end gap-3">
+            <Dialog.Close asChild>
+              <Button type="button" variant="outline" size="sm">
+                {cancelLabel}
+              </Button>
+            </Dialog.Close>
+            <Button
               type="button"
+              size="sm"
+              variant={destructive ? 'destructive' : 'default'}
               onClick={onConfirm}
-              className={cn(
-                'rounded-2xl px-4 py-2 text-sm font-medium text-white',
-                destructive ? 'bg-danger' : 'bg-brand-600',
-              )}
             >
               {confirmLabel}
-            </button>
+            </Button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

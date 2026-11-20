@@ -52,7 +52,7 @@ export function ImageUploader({
       const remaining = maxImages - images.length;
 
       if (remaining <= 0) {
-        setErrors([`Tối đa ${maxImages} ảnh`]);
+        setErrors([`Maximum ${maxImages} images allowed`]);
         return;
       }
 
@@ -75,7 +75,7 @@ export function ImageUploader({
           newErrors.push(
             err instanceof CloudinaryUploadError
               ? `${toUpload[idx].name}: ${err.message}`
-              : `${toUpload[idx].name}: Upload thất bại`
+              : `${toUpload[idx].name}: Upload failed`
           );
         }
       });
@@ -92,7 +92,6 @@ export function ImageUploader({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
       processFiles(e.target.files);
-      // reset so same file can be re-selected
       e.target.value = '';
     }
   };
@@ -114,7 +113,6 @@ export function ImageUploader({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Drop Zone */}
       {canAdd && (
         <div
           role="button"
@@ -125,44 +123,43 @@ export function ImageUploader({
           onClick={() => !uploading && fileInputRef.current?.click()}
           onKeyDown={(e) => e.key === 'Enter' && !uploading && fileInputRef.current?.click()}
           className={cn(
-            'relative flex flex-col items-center justify-center gap-3',
-            'border-2 border-dashed rounded-xl p-10 cursor-pointer',
-            'transition-all duration-200 select-none',
+            'relative flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-8 transition-colors select-none cursor-pointer',
             dragOver
-              ? 'border-black bg-neutral-50 scale-[1.01]'
-              : 'border-neutral-200 bg-surface-container-low hover:border-neutral-400 hover:bg-neutral-50',
+              ? 'border-primary bg-surface-container'
+              : 'border-outline-variant bg-surface-container-low hover:border-primary hover:bg-surface-container/60',
             uploading && 'pointer-events-none opacity-60',
           )}
         >
           {uploading ? (
             <>
-              {/* Spinner */}
-              <div className="w-10 h-10 rounded-full border-2 border-neutral-200 border-t-black animate-spin" />
-              <p className="text-[11px] font-bold tracking-widest uppercase text-neutral-400">
-                Đang tải lên...
+              <div className="h-9 w-9 animate-spin rounded-full border-2 border-outline-variant border-t-primary" />
+              <p className="font-label text-[11px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                Uploading…
               </p>
             </>
           ) : (
             <>
-              <div className={cn(
-                'w-14 h-14 rounded-full flex items-center justify-center transition-colors duration-200',
-                dragOver ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-400'
-              )}>
-                <span className="material-symbols-outlined text-3xl">cloud_upload</span>
+              <div
+                className={cn(
+                  'flex h-12 w-12 items-center justify-center rounded-full transition-colors',
+                  dragOver ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/60'
+                )}
+              >
+                <span className="material-symbols-outlined text-2xl">cloud_upload</span>
               </div>
               <div className="text-center">
-                <p className="text-sm font-semibold text-neutral-700">
-                  Kéo thả ảnh vào đây
+                <p className="text-sm font-semibold text-on-surface">
+                  Drop product images here
                 </p>
-                <p className="text-[11px] text-neutral-400 mt-1">
-                  hoặc <span className="underline font-medium text-neutral-600">click để chọn file</span>
+                <p className="mt-1 text-xs text-on-surface-variant">
+                  or <span className="font-semibold text-primary underline underline-offset-4">browse files</span>
                 </p>
-                <p className="text-[10px] text-neutral-300 mt-2 tracking-wide uppercase">
-                  JPEG · PNG · WEBP · tối đa 5MB mỗi ảnh · tối đa {maxImages} ảnh
+                <p className="mt-2 font-label text-[10px] font-bold uppercase tracking-[0.16em] text-outline">
+                  JPEG · PNG · WEBP · Max 5MB each · Up to {maxImages} images
                 </p>
               </div>
               {images.length > 0 && (
-                <div className="absolute top-3 right-3 bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">
+                <div className="absolute right-3 top-3 rounded-full bg-primary px-2.5 py-0.5 font-label text-[10px] font-bold tracking-wider text-on-primary">
                   {images.length}/{maxImages}
                 </div>
               )}
@@ -171,7 +168,6 @@ export function ImageUploader({
         </div>
       )}
 
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -182,11 +178,10 @@ export function ImageUploader({
         disabled={disabled || uploading}
       />
 
-      {/* Error messages */}
       {errors.length > 0 && (
         <div className="space-y-1">
           {errors.map((error, i) => (
-            <p key={i} className="text-xs text-red-500 flex items-center gap-1.5">
+            <p key={i} className="flex items-center gap-1.5 text-xs font-medium text-error">
               <span className="material-symbols-outlined text-sm">error</span>
               {error}
             </p>
@@ -194,66 +189,51 @@ export function ImageUploader({
         </div>
       )}
 
-      {/* Image preview grid */}
       {images.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
           {images.map((img, idx) => (
             <div
               key={img.url + idx}
-              className="group relative aspect-square rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 shadow-sm"
+              className="group relative aspect-square overflow-hidden rounded-lg border border-outline-variant/60 bg-surface-container"
             >
-              {/* Preview image */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={img.url}
-                alt={`Ảnh sản phẩm ${idx + 1}`}
-                className="w-full h-full object-cover"
+                alt={`Product image ${idx + 1}`}
+                className="h-full w-full object-cover"
               />
 
-              {/* Primary badge */}
               {idx === 0 && (
-                <div className="absolute bottom-1.5 left-1.5 bg-black/80 backdrop-blur-sm text-white text-[9px] font-bold tracking-widest uppercase px-1.5 py-0.5 rounded">
-                  Chính
+                <div className="absolute bottom-1.5 left-1.5 rounded-sm bg-primary/90 px-1.5 py-0.5 font-label text-[9px] font-bold uppercase tracking-[0.16em] text-on-primary">
+                  Primary
                 </div>
               )}
 
-              {/* Remove button — visible on hover */}
               <button
                 type="button"
                 onClick={() => removeImage(idx)}
                 disabled={disabled}
                 className={cn(
-                  'absolute top-1.5 right-1.5 w-6 h-6 rounded-full',
-                  'bg-white/90 backdrop-blur-sm shadow-md',
-                  'flex items-center justify-center',
-                  'opacity-0 group-hover:opacity-100 transition-opacity duration-150',
-                  'hover:bg-red-500 hover:text-white',
+                  'absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-surface-container-lowest/95 text-on-surface shadow-sm transition-all opacity-0 group-hover:opacity-100 hover:bg-error hover:text-on-error',
                   disabled && 'hidden'
                 )}
-                aria-label={`Xóa ảnh ${idx + 1}`}
+                aria-label={`Remove image ${idx + 1}`}
               >
                 <span className="material-symbols-outlined text-sm">close</span>
               </button>
 
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 pointer-events-none" />
+              <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
             </div>
           ))}
 
-          {/* Add more slot — if still have space */}
           {images.length < maxImages && !uploading && !disabled && (
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className={cn(
-                'aspect-square rounded-lg border-2 border-dashed border-neutral-200',
-                'flex flex-col items-center justify-center gap-1',
-                'text-neutral-300 hover:text-neutral-500 hover:border-neutral-400',
-                'transition-all duration-150 cursor-pointer bg-surface-container-low'
-              )}
+              className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-outline-variant bg-surface-container-low text-outline transition-colors hover:border-primary hover:text-primary"
             >
               <span className="material-symbols-outlined text-2xl">add_photo_alternate</span>
-              <span className="text-[9px] font-bold tracking-widest uppercase">Thêm</span>
+              <span className="font-label text-[9px] font-bold uppercase tracking-[0.16em]">Add</span>
             </button>
           )}
         </div>

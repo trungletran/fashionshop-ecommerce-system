@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-//import { LoadingState } from '@/components/common/loading-state';
-//import { EmptyState } from '@/components/common/empty-state';
+import { PageHeader } from '@/components/common/page-header';
+import { Button } from '@/components/ui/button';
 import { useDashboardQuery } from '@/features/dashboard/hooks';
 import { DashboardView } from '@/features/dashboard/components/dashboard-view';
 
@@ -18,42 +18,39 @@ export default function AdminDashboardPage() {
   const query = useDashboardQuery(from, to);
 
   return (
-    <div className="space-y-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-end mb-12">
-        <div>
-          <h2 className="font-headline text-4xl font-extrabold tracking-tighter text-on-surface uppercase">Dashboard</h2>
-          <p className="text-on-surface-variant font-label tracking-widest text-[10px] mt-2">OVERVIEW & CORE METRICS</p>
-        </div>
-        
-        <div className="flex gap-3 items-center">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest text-[10px] font-semibold rounded-md border border-outline-variant">
-            <span className="material-symbols-outlined text-xs">calendar_today</span>
-            <div className="flex gap-2 items-center">
-              <input 
-                type="date" 
-                value={from} 
-                onChange={(event) => setFrom(event.target.value)} 
-                className="bg-transparent border-none p-0 focus:ring-0 text-[10px] cursor-pointer"
+    <div className="mx-auto max-w-7xl space-y-8">
+      <PageHeader
+        eyebrow="Overview & Core Metrics"
+        title="Dashboard"
+        action={
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex h-11 items-center gap-2 rounded-md border border-outline-variant bg-surface-container-lowest px-3.5 text-xs font-medium text-on-surface">
+              <span className="material-symbols-outlined text-base text-outline">calendar_today</span>
+              <input
+                type="date"
+                aria-label="Start date"
+                value={from}
+                onChange={(event) => setFrom(event.target.value)}
+                className="cursor-pointer border-none bg-transparent p-0 text-xs text-on-surface outline-none"
               />
-              <span className="opacity-40">→</span>
-              <input 
-                type="date" 
-                value={to} 
-                onChange={(event) => setTo(event.target.value)} 
-                className="bg-transparent border-none p-0 focus:ring-0 text-[10px] cursor-pointer"
+              <span className="text-outline">→</span>
+              <input
+                type="date"
+                aria-label="End date"
+                value={to}
+                onChange={(event) => setTo(event.target.value)}
+                className="cursor-pointer border-none bg-transparent p-0 text-xs text-on-surface outline-none"
               />
             </div>
+            <Button type="button">
+              <span className="material-symbols-outlined text-base">download</span>
+              <span>Export Report</span>
+            </Button>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary text-xs font-semibold rounded-md hover:opacity-90 transition-all active:scale-95">
-            <span className="material-symbols-outlined text-sm">download</span>
-            Export Report
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       <DashboardView data={query.data} isLoading={query.isLoading} />
     </div>
   );
 }
-

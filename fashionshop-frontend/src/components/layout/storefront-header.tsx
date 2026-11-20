@@ -27,7 +27,7 @@ export function StorefrontHeader() {
   const isLoggedIn = Boolean(session.token);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-outline/70 bg-surface/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-outline-variant/70 bg-surface/95 backdrop-blur">
       <div className="w-full px-2 sm:px-4">
         <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3">
           <Link href="/" aria-label="Go to home" className="inline-flex items-center justify-self-start">

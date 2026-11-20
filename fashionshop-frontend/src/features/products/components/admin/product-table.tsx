@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { cn } from '@/lib/utils/cn';
+import { Badge } from '@/components/ui/badge';
 import type { Product } from '@/types/product';
 
 type Props = {
@@ -13,102 +13,122 @@ type Props = {
 
 export function ProductTable({ products, onDelete, isLoading, editBasePath = '/admin/products' }: Props) {
   return (
-    <table className="w-full text-left border-collapse">
-      <thead>
-        <tr className="border-b border-neutral-100">
-          <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 text-center w-24 tracking-widest font-bold">Image</th>
-          <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Product Name</th>
-          <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Category</th>
-          <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Stock</th>
-          <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Price</th>
-          <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold">Status</th>
-          <th className="px-6 py-5 text-[10px] uppercase text-neutral-400 tracking-widest font-bold text-right">Actions</th>
+    <table className="w-full border-collapse text-left">
+      <thead className="border-b border-outline-variant/60 bg-surface-container-low">
+        <tr>
+          <th className="w-24 px-6 py-4 text-center font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Image
+          </th>
+          <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Product Name
+          </th>
+          <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Category
+          </th>
+          <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Stock
+          </th>
+          <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Price
+          </th>
+          <th className="px-6 py-4 font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Status
+          </th>
+          <th className="px-6 py-4 text-right font-label text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+            Actions
+          </th>
         </tr>
       </thead>
 
-      <tbody className="divide-y divide-neutral-50 font-body">
+      <tbody className="divide-y divide-outline-variant/40 font-body">
         {isLoading ? (
           Array.from({ length: 5 }).map((_, i) => (
             <tr key={i} className="animate-pulse">
               <td className="px-6 py-4">
-                <div className="w-12 h-16 mx-auto rounded bg-neutral-100" />
+                <div className="mx-auto h-16 w-12 rounded-md bg-surface-container" />
               </td>
               <td className="px-6 py-4">
                 <div className="space-y-2">
-                  <div className="h-4 w-32 bg-neutral-100 rounded" />
-                  <div className="h-3 w-20 bg-neutral-100 rounded" />
+                  <div className="h-4 w-32 rounded-md bg-surface-container" />
+                  <div className="h-3 w-20 rounded-md bg-surface-container" />
                 </div>
               </td>
               <td className="px-6 py-4">
-                <div className="h-5 w-16 bg-neutral-100 rounded" />
+                <div className="h-5 w-16 rounded-md bg-surface-container" />
               </td>
               <td className="px-6 py-4">
-                <div className="h-4 w-10 bg-neutral-100 rounded" />
+                <div className="h-4 w-10 rounded-md bg-surface-container" />
               </td>
               <td className="px-6 py-4">
-                <div className="h-4 w-12 bg-neutral-100 rounded" />
+                <div className="h-4 w-12 rounded-md bg-surface-container" />
               </td>
               <td className="px-6 py-4">
-                <div className="h-4 w-16 bg-neutral-100 rounded-full" />
+                <div className="h-5 w-16 rounded-full bg-surface-container" />
               </td>
               <td className="px-6 py-4 text-right">
-                <div className="h-4 w-10 bg-neutral-100 rounded ml-auto" />
+                <div className="ml-auto h-4 w-16 rounded-md bg-surface-container" />
               </td>
             </tr>
           ))
         ) : products.length === 0 ? (
           <tr>
-            <td colSpan={7} className="px-6 py-20 text-center text-neutral-500 text-sm">
+            <td colSpan={7} className="px-6 py-16 text-center text-sm text-on-surface-variant">
               No products found
             </td>
           </tr>
         ) : (
           products.map((product) => (
-            <tr key={product.id} className="hover:bg-surface-container-low/50 group">
+            <tr key={product.id} className="transition-colors hover:bg-surface-container-low/60">
               <td className="px-6 py-4">
-                <div className="relative w-12 h-16 mx-auto rounded overflow-hidden bg-neutral-100">
+                <div className="relative mx-auto h-16 w-12 overflow-hidden rounded-md border border-outline-variant/50 bg-surface-container">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={product.imageUrl || '/images/product-blazer.svg'}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                   />
                 </div>
               </td>
 
               <td className="px-6 py-4">
-                <p className="font-bold text-sm">{product.name}</p>
-                <p className="text-[10px] text-neutral-400 uppercase">
+                <p className="text-sm font-bold text-primary">{product.name}</p>
+                <p className="font-label text-[10px] uppercase tracking-wider text-outline">
                   SKU: {product.slug?.toUpperCase() || product.id.toString().slice(-8).toUpperCase()}
                 </p>
               </td>
 
               <td className="px-6 py-4">
-                <span className="px-2 py-1 bg-neutral-100 rounded text-[10px] uppercase">
+                <Badge variant="secondary">
                   {product.categoryName || 'Uncategorized'}
-                </span>
+                </Badge>
               </td>
 
-              <td className="px-6 py-4 text-sm">{product.stockQuantity}</td>
+              <td className="px-6 py-4 text-sm font-medium text-on-surface">{product.stockQuantity}</td>
 
-              <td className="px-6 py-4 font-semibold">
+              <td className="px-6 py-4 font-headline text-sm font-bold text-primary">
                 ${product.price.toLocaleString()}
               </td>
 
               <td className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <div className={cn('w-1.5 h-1.5 rounded-full', product.isActive ? 'bg-green-500' : 'bg-neutral-400')} />
-                  <span className={cn('text-[11px] uppercase', product.isActive ? 'text-black' : 'text-neutral-500')}>
-                    {product.isActive ? 'Active' : 'Draft'}
-                  </span>
-                </div>
+                <Badge variant={product.isActive ? 'success' : 'secondary'}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${product.isActive ? 'bg-emerald-600' : 'bg-outline'}`} />
+                  {product.isActive ? 'Active' : 'Draft'}
+                </Badge>
               </td>
 
               <td className="px-6 py-4 text-right">
-                <div className="flex justify-end gap-4 opacity-0 group-hover:opacity-100">
-                  <Link href={`${editBasePath}/${product.id}/edit`} className="text-sm font-medium hover:underline">
+                <div className="flex justify-end gap-4">
+                  <Link
+                    href={`${editBasePath}/${product.id}/edit`}
+                    className="font-label text-[10px] font-bold uppercase tracking-[0.16em] text-primary underline-offset-4 hover:underline"
+                  >
                     Edit
                   </Link>
-                  <button type="button" onClick={() => onDelete(product.id)} className="text-sm font-medium text-red-600 hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => onDelete(product.id)}
+                    className="cursor-pointer font-label text-[10px] font-bold uppercase tracking-[0.16em] text-error underline-offset-4 hover:underline"
+                  >
                     Delete
                   </button>
                 </div>

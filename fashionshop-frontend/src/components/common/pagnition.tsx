@@ -15,26 +15,27 @@ export function Pagination({
   totalPages,
   pageSize,
   totalItems,
-  onPageChange
+  onPageChange,
 }: Props) {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="px-6 py-6 border-t border-neutral-100 flex items-center justify-between">
-      <p className="text-xs text-neutral-500 font-body">
+    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-outline-variant/60 px-6 py-5">
+      <p className="font-body text-xs text-on-surface-variant">
         Showing{' '}
-        <span className="font-bold text-black">
-          {Math.min((page - 1) * pageSize + 1, totalItems)} -{' '}
-          {Math.min(page * pageSize, totalItems)}
+        <span className="font-bold text-primary">
+          {Math.min((page - 1) * pageSize + 1, totalItems)} – {Math.min(page * pageSize, totalItems)}
         </span>{' '}
-        of <span className="font-bold text-black">{totalItems}</span> items
+        of <span className="font-bold text-primary">{totalItems}</span> items
       </p>
 
-      <div className="flex gap-1">
+      <div className="flex items-center gap-1.5">
         <button
+          type="button"
           onClick={() => onPageChange(Math.max(1, page - 1))}
           disabled={page === 1}
-          className="w-8 h-8 flex items-center justify-center rounded border border-neutral-200 text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all"
+          aria-label="Previous page"
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-outline-variant bg-surface-container-lowest text-on-surface-variant transition-colors hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-35"
         >
           <span className="material-symbols-outlined text-lg">chevron_left</span>
         </button>
@@ -42,12 +43,13 @@ export function Pagination({
         {Array.from({ length: totalPages }).map((_, i) => (
           <button
             key={i}
+            type="button"
             onClick={() => onPageChange(i + 1)}
             className={cn(
-              "w-8 h-8 flex items-center justify-center rounded text-xs font-bold transition-all",
+              'flex h-9 w-9 items-center justify-center rounded-md font-label text-xs font-bold transition-colors',
               page === i + 1
-                ? "bg-primary text-white"
-                : "border border-neutral-200 hover:bg-neutral-50"
+                ? 'bg-primary text-on-primary'
+                : 'border border-outline-variant bg-surface-container-lowest text-on-surface hover:border-primary',
             )}
           >
             {i + 1}
@@ -55,9 +57,11 @@ export function Pagination({
         ))}
 
         <button
+          type="button"
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
           disabled={page === totalPages}
-          className="w-8 h-8 flex items-center justify-center rounded border border-neutral-200 text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all"
+          aria-label="Next page"
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-outline-variant bg-surface-container-lowest text-on-surface-variant transition-colors hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-35"
         >
           <span className="material-symbols-outlined text-lg">chevron_right</span>
         </button>
