@@ -111,8 +111,8 @@ Business logic mainly lives in `src/features`, reusable UI components live in `s
 ```text
 .
 |-- .agents/
-|   |-- skills/                 # AI Agent specialized skill instructions
-|   `-- workflows/startcycle.md # Automated development lifecycle workflow
+|   `-- skills/                 # GitHub Spec Kit AI agent skills (speckit-*)
+|-- .specify/                   # Spec Kit constitution, templates, and scripts
 |-- AGENTS.md                   # AI Team roles and workspace rules
 |-- start.bat
 |-- database/
@@ -540,19 +540,15 @@ That means most backend tests do not require a real MySQL instance.
 
 ## AI Agent Workflow
 
-This repository includes autonomous AI agent configurations:
+This repository uses **GitHub Spec Kit** skills in `.agents/skills/` together with project rules in [AGENTS.md](AGENTS.md) and `.specify/memory/constitution.md`:
 
-- **[AGENTS.md](AGENTS.md)**: Defines team roles for AI pairing (`@pm`, `@engineer`, `@qa`, `@devops`).
-- **`.agents/workflows/startcycle.md`**: Implements the 4-phase automated feature development loop:
-  1. **Phase 1 (@pm)**: Analyzes requirements, writes specification to `docs/specs/`, and pauses for user approval.
-  2. **Phase 2 (@engineer)**: Generates production code in `fashionshop-backend` and `fashionshop-frontend`.
-  3. **Phase 3 (@qa)**: Runs unit tests (`mvnw.cmd test`, `npm test`) and security audits.
-  4. **Phase 4 (@devops)**: Verifies builds, environment configuration, and local startup.
-
-Trigger in supported AI IDEs (Antigravity, Cursor) with:
-```text
-/startcycle <your-feature-idea>
-```
+1. **`speckit-specify`**: Create `specs/<id>-<feature>/spec.md` from a feature description.
+2. **`speckit-clarify`** *(optional)*: Clarify underspecified requirements directly into `spec.md`.
+3. **`speckit-plan`**: Generate `plan.md`, `research.md`, `data-model.md`, `contracts/`, and `quickstart.md`.
+4. **`speckit-tasks`**: Generate dependency-ordered tasks in `tasks.md`.
+5. **`speckit-analyze`** *(recommended)* & **`speckit-checklist`** *(optional)*: Cross-check consistency and quality before coding.
+6. **`speckit-implement`**: Execute tasks in `tasks.md` with backend (`mvnw.cmd test`) and frontend (`npm run lint`, `npm run test:run`) verification.
+7. **`speckit-converge`** *(when resuming/auditing)*: Compare the codebase against spec/plan/tasks and append any remaining work to `tasks.md`.
 
 ## Contributing
 
